@@ -1,10 +1,11 @@
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, String
+from typing import Optional
 
 DeclarativeBase = declarative_base()
 BaseModel = DeclarativeBase
 
-def UUIDFKey(*, ForeignKey=None, nullable=False):
+def UUIDFKey(*, ForeignKey=None, nullable=False, comment: Optional[str] = None):
     if ForeignKey is None:
         return Column(
             String, index=True, nullable=nullable

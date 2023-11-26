@@ -9,7 +9,7 @@ def getLoaders(info):
 def getUser(info):
     return info.context["user"]
 
-PreferenceTagEntityGQLModel = Annotated["PreferenceTagEntityGQLModel", lazy(".tagEntityModel")]
+PreferenceTagEntityGQLModel = Annotated["PreferenceTagEntityGQLModel", lazy(".TagEntityGQLModel")]
 UserGQLModel = Annotated["UserGQLModel", lazy(".externals")]
 #from gql_preferences.GraphTypeDefinitions.tagEntityModel import PreferenceTagEntity as PreferenceTagEntityExecutor
 
@@ -79,6 +79,11 @@ async def preference_tags(info: strawberry.types.Info) -> List["PreferenceTagGQL
     # result = list(result)
     # print(result)
     return result
+
+# New query field for searching by ID
+@strawberry.field(description="""Returns a tag by ID""")
+async def tag_by_id(info: strawberry.types.Info, id: strawberry.ID) -> Optional[PreferenceTagGQLModel]:
+    return await PreferenceTagGQLModel.resolve_reference(info, id)
 
 
 #####################################################################
