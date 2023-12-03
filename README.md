@@ -16,27 +16,48 @@ Code understanding
 
 SearchById
 
----
+### till 3.12.
+
+- change to versions (requirements)
+
+- changes to dbfeeder (get_demodata)
+
+- getLoaders moved to dataloaders
+
+- PreferenceSettings (Types)
 
 - Query:
 ```python
-{
-  tagById(id: "8148fd61-77b3-45d1-a382-ca3aadafb9a1") {
+query PSQuery {
+ preferenceSettingsTypePage {
     id
     name
+    nameEn
+    preferenceSettings {
+      id
+      name
+      nameEn
+      lastchange
+      order
+    }
+    lastchange
+    order
   }
 }
+
  ```
 - Mutation:
 ```python
-mutation {
-  tagInsert(tag: { name: "Ahoj" }) {
-    tag {
-      name
-    }
+mutation PSTInsert {
+  preferenceSettingsTypeInsert(preferenceSettingsType: {name: "Typ"}) {
+    id
+    msg
   }
 }
  ```
+
+
+- Copy of GraphResolvers, BaeGQLMode, utils (where), RBCAObject
 
 ---
 
@@ -56,16 +77,41 @@ mutation {
 
 ---
 
-## ?
+## TODO
 
-TagType?  PreferenceSettings?
+Copy DataLoaders?
 
-TagTypeGQLModel: Co je TagType?, systemdata.json:
- - preferedtags
-
- - preferedtagentities
+Preference Settings pro uživatele (JSON string či tabulka?)
 
 External ID? - externals.py
+
+ - přidat jakými tagy je entita označena, což bude něco takového:
+
+```python
+ # list of tags for the entity
+tags_description = """Returns list of tags for the entity."""
+@strawberry.field(description=tags_description)
+async def preference_tags_for_entity(info: strawberry.types.Info, entity_id: strawberry.ID) -> List["PreferenceTagEntityGQLModel"]:
+    actingUser = getUser(info)
+    actingUserId = actingUser["id"]
+    loader = getLoaders(info).tagentities
+    result = await loader.filter_by(author_id=actingUserId, entity_id=entity_id)
+    return result
+```
+
+## ?
+
+TagType - je v GraphTypeDefinitions/TaEntityGQLModel.entity_type_ids  
+
+PreferenceSettings jako JSON String k uživateli?
+
+Při updatu Preference Settings, neměla by nastat změna lastchange u Preference Settings Type?
+
+order - client side?
+
+Result entity?
+
+
 
 ## Zadání:
 
@@ -90,3 +136,4 @@ Kompletní CRUD dotazy na GQL v souboru externalids_queries.json (dictionary), j
 Kompletní popisy API v kódu (description u GQLModelů) a popisy DB vrstvy (comment u DBModelů).
 
 Zabezpečte více jak 90% code test coverage (standard pytest).
+

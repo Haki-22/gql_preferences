@@ -1821,5 +1821,65 @@
             "author_id": "f8089aa6-2c4a-4746-9503-105fcc5d054c",
             "name": "sledované"
         }
-    ]
+    ],
+    "preference_settings_types":[
+        {
+          "id": "89838aab-d06e-445e-9a2e-d3c55bc7cb90",
+          "name": "barevny motiv",
+          "name_en": "theme"
+        },
+        {
+          "id": "898a8aab-d06e-445e-982e-d3c55bc7cb90",
+          "name": "Jazyk",
+          "name_en": "language"
+        },
+        {
+          "id": "89838aab-d06e-445e-982a-d3c55bc7cb90",
+          "name": "Notifikace",
+          "name_en": "notifications"
+        }
+      ],
+
+      "preference_settings":[
+        {
+          "id": "90838aab-d06e-445e-9a2e-d3c55bc7cb90",
+          "preference_settings_type_id":"89838aab-d06e-445e-9a2e-d3c55bc7cb90",
+          "name": "Světlý",
+          "name_en": "Light",
+          "default_settings":true
+        },
+        {
+            "id": "90838aab-d06e-445e-9a2e-d3c55bc7cb91",
+            "preference_settings_type_id":"89838aab-d06e-445e-9a2e-d3c55bc7cb90",
+            "name": "Tmavý",
+            "name_en": "Dark"
+          },
+        {
+          "id":"918a8aab-d06e-445e-982e-d3c55bc7cb90",
+          "preference_settings_type_id": "898a8aab-d06e-445e-982e-d3c55bc7cb90",
+          "name": "Čeština",
+          "name_en": "Czech",
+          "default_settings":true
+        },
+        {
+            "id":"918a8aab-d06e-445e-982e-d3c55bc7cb91",
+            "preference_settings_type_id": "898a8aab-d06e-445e-982e-d3c55bc7cb90",
+            "name": "Angličtina",
+            "name_en": "English"
+          },
+        {
+          "id":"928a8aab-d06e-445e-982e-d3c55bc7cb90",
+          "preference_settings_type_id": "89838aab-d06e-445e-982a-d3c55bc7cb90",
+          "name": "Zapnute",
+          "name_en": "Turned on",
+          "default_settings":true
+        },
+        {
+            "id":"928a8aab-d06e-445e-982e-d3c55bc7cb91",
+            "preference_settings_type_id": "89838aab-d06e-445e-982a-d3c55bc7cb90",
+            "name": "Vypnute",
+            "name_en": "Turned off"
+          }
+      ]
+      
 }

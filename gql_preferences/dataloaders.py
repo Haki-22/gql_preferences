@@ -6,12 +6,18 @@ from sqlalchemy import select, update
 from uoishelpers.dataloaders import createIdLoader
 
 from gql_preferences.DBDefinitions import (
-    TagModel, TagEntityModel
+    TagModel, 
+    TagEntityModel,
+
+    PreferenceSettingsTypeModel,
+    PreferenceSettingsModel,
 )
 
 dbmodels = {
     "tags": TagModel,
-    "tagentities" : TagEntityModel
+    "tagentities" : TagEntityModel,
+    "preference_settings_types" : PreferenceSettingsTypeModel,
+    "preference_settings": PreferenceSettingsModel
 }
 
 def createDataLoders(asyncSessionMaker, models=dbmodels):
@@ -30,4 +36,10 @@ async def createLoaders(asyncSessionMaker, models=dbmodels):
     Loaders = type('Loaders', (), attrs)   
     return Loaders()
 
-from functools import cache
+# Function to get loaders from the GraphQL context
+def getLoaders(info):
+    return info.context["all"]
+
+# Function to get the user from the GraphQL context
+def getUser(info):
+    return info.context["user"]

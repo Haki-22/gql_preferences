@@ -1,7 +1,7 @@
 import sqlalchemy
 from sqlalchemy import Column, String, DateTime, ForeignKey
-from uoishelpers.uuid import UUIDColumn
-from .Base import BaseModel, UUIDFKey
+from .Base import BaseModel
+from. uuid import UUIDFKey, UUIDColumn
 
 # Define a SQLAlchemy model for the 'preferedtags' table
 class TagModel(BaseModel):
@@ -9,10 +9,10 @@ class TagModel(BaseModel):
     __tablename__ = "preferedtags"
     
     # Unique identifier for the tag
-    id = UUIDColumn(postgres=False)
+    id = UUIDColumn()
 
     # Foreign key relationship to the author/user who created the tag
-    author_id = UUIDFKey(nullable=True, comment="Foreign key to the author/user who created the tag")
+    author_id = UUIDFKey( comment="Foreign key to the author/user who created the tag")
 
     # Name of the tag
     name = Column(String, comment="Name of the tag")
@@ -24,7 +24,7 @@ class TagModel(BaseModel):
     lastchange = Column(DateTime, server_default=sqlalchemy.sql.func.now(), comment="Timestamp for the last change to the tag")
     
     # Foreign key relationship to the user who created the tag
-    createdby = UUIDFKey(nullable=True, comment="Foreign key to the user who created the tag")
+    createdby = UUIDFKey( comment="Foreign key to the user who created the tag")
 
     # Foreign key relationship to the user who last changed the tag
-    changedby = UUIDFKey(nullable=True, comment="Foreign key to the user who last changed the tag")
+    changedby = UUIDFKey( comment="Foreign key to the user who last changed the tag")

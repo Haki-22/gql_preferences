@@ -14,4 +14,26 @@ class Query:
     from .TagGQLModel import tag_by_id
     tag_by_id = tag_by_id
 
+    #############################################################
+    #
+    # Preference Settings Type
+    #
+    #############################################################
+
+    from .PreferenceSettingsTypeGQLModel import preference_settings_type_page
+    preference_settings_type_page = preference_settings_type_page
+
+    from .PreferenceSettingsTypeGQLModel import preference_settings_type_by_id
+    preference_settings_type_by_id = preference_settings_type_by_id
+
+    #############################################################
+    #
+    # Preference Settings 
+    #
+    #############################################################
+
+    from .PreferenceSettingsGQLModel import preference_settings_page
+
+    from .PreferenceSettingsGQLModel import preference_settings_by_id
+
     pass

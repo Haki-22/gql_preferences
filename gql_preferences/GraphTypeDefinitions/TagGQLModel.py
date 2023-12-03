@@ -2,22 +2,19 @@ import strawberry
 from strawberry import lazy
 import datetime
 from typing import Union, Optional, List, TYPE_CHECKING, Annotated
+from uuid import UUID
+from ..dataloaders import getLoaders, getUser
 
-def getLoaders(info):
-    return info.context["all"]
-
-def getUser(info):
-    return info.context["user"]
+from .BaseGQLModel import BaseGQLModel
 
 PreferenceTagEntityGQLModel = Annotated["PreferenceTagEntityGQLModel", lazy(".TagEntityGQLModel")]
 UserGQLModel = Annotated["UserGQLModel", lazy(".externals")]
-#from gql_preferences.GraphTypeDefinitions.tagEntityModel import PreferenceTagEntity as PreferenceTagEntityExecutor
 
 @strawberry.federation.type(
     keys=["id"],
     description="""Entity representing a tag""",
 )
-class PreferenceTagGQLModel:
+class PreferenceTagGQLModel(BaseGQLModel):
     @classmethod
     async def resolve_reference(cls, info: strawberry.types.Info, id: strawberry.ID):
         if id is None:
@@ -41,13 +38,15 @@ class PreferenceTagGQLModel:
         return self.created
 
     @strawberry.field(description="""user who created this tag""")
-    async def created_by(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
-        result = await UserGQLModel.resolve_reference(info=info, id=self.createdby)
+    async def createdby(self, info: strawberry.types.Info) -> Union["UserGQLModel", None]:
+        from .externals import UserGQLModel
+        result = await UserGQLModel.resolve_reference(id=self.createdby)
         return result
 
     @strawberry.field(description="""user who updated this tag""")
-    async def changed_by(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
-        result = await UserGQLModel.resolve_reference(info=info, id=self.changedby)
+    async def changedby(self, info: strawberry.types.Info) -> Union["UserGQLModel", None]:
+        from .externals import UserGQLModel
+        result = await UserGQLModel.resolve_reference(id=self.changedby)
         return result
 
     @strawberry.field(description="""tag value, can be "red", "2023", etc. """)
@@ -68,21 +67,29 @@ class PreferenceTagGQLModel:
 #
 #####################################################################
 
+# Query for a page of preference types
+@strawberry.field(description="""Returns a page of tags, [opt.] skip=0, limit=20""")
+async def tags_type_page(
+        self, info: strawberry.types.Info, skip: int = 0, limit: int = 20
+    ) -> List[PreferenceTagGQLModel]:
+        loader = getLoaders(info).tags
+        result = await loader.page(skip, limit)
+        return result
+
 tags_description = """Returns list of tags associated with asking user."""
 @strawberry.field(description=tags_description)
 async def preference_tags(info: strawberry.types.Info) -> List["PreferenceTagGQLModel"]:
     actingUser = getUser(info)
-    # print(actingUser)
     loader = getLoaders(info).tags
     result = await loader.filter_by(author_id=actingUser["id"])
     
-    # result = list(result)
-    # print(result)
     return result
 
 # New query field for searching by ID
 @strawberry.field(description="""Returns a tag by ID""")
 async def tag_by_id(info: strawberry.types.Info, id: strawberry.ID) -> Optional[PreferenceTagGQLModel]:
+    if id is not UUID: # doesnt work :C
+        return None
     return await PreferenceTagGQLModel.resolve_reference(info, id)
 
 

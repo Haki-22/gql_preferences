@@ -1,38 +1,47 @@
-import typing
+#import typing
 import strawberry
+from uuid import UUID
 
 @strawberry.federation.type(extend=True, keys=["id"])
 class UserGQLModel:
 
-    id: strawberry.ID = strawberry.federation.field(external=True)
+    id: UUID = strawberry.federation.field(external=True)
 
     @classmethod
-    async def resolve_reference(cls, id: strawberry.ID):
+    async def resolve_reference(cls, id: UUID):
+        if(id is None):
+            return None
         return cls(id=id)
 
 @strawberry.federation.type(extend=True, keys=["id"])
 class GroupGQLModel:
 
-    id: strawberry.ID = strawberry.federation.field(external=True)
+    id: UUID = strawberry.federation.field(external=True)
 
     @classmethod
-    async def resolve_reference(cls, id: strawberry.ID):
+    async def resolve_reference(cls, id: UUID):
+        if(id is None):
+            return None
         return cls(id=id)
 
 @strawberry.federation.type(extend=True, keys=["id"])
 class EventGQLModel:
 
-    id: strawberry.ID = strawberry.federation.field(external=True)
+    id: UUID = strawberry.federation.field(external=True)
 
     @classmethod
-    async def resolve_reference(cls, id: strawberry.ID):
+    async def resolve_reference(cls, id: UUID):
+        if(id is None):
+            return None
         return cls(id=id)
     
 @strawberry.federation.type(extend=True, keys=["id"])
 class FacilityGQLModel:
 
-    id: strawberry.ID = strawberry.federation.field(external=True)
+    id: UUID = strawberry.federation.field(external=True)
 
     @classmethod
-    async def resolve_reference(cls, id: strawberry.ID):
+    async def resolve_reference(cls, id: UUID):
+        if(id is None):
+            return None
         return cls(id=id)

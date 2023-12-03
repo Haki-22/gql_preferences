@@ -5,18 +5,6 @@ from typing import Optional
 DeclarativeBase = declarative_base()
 BaseModel = DeclarativeBase
 
-def UUIDFKey(*, ForeignKey=None, nullable=False, comment: Optional[str] = None):
-    if ForeignKey is None:
-        return Column(
-            String, index=True, nullable=nullable
-        )
-    else:
-        return Column(
-            ForeignKey, index=True, nullable=nullable
-        )
-    
-
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 

@@ -3,21 +3,16 @@ import datetime
 from typing import Union, Optional, List, Annotated
 
 from .externals import UserGQLModel, GroupGQLModel, FacilityGQLModel, EventGQLModel
+from ..dataloaders import getLoaders, getUser
 
-# Function to get loaders from the GraphQL context
-def getLoaders(info):
-    return info.context["all"]
-
-# Function to get the user from the GraphQL context
-def getUser(info):
-    return info.context["user"]
+from .BaseGQLModel import BaseGQLModel
 
 # GraphQL type representing a tag or label that can be assigned to entities
 @strawberry.federation.type(
     keys=["id"],
     description="""Entity representing a tag / label which can be assigned to entities""",
 )
-class PreferenceTagEntityGQLModel:
+class PreferenceTagEntityGQLModel(BaseGQLModel):
     # Reference resolution for the tag entity
     @classmethod
     async def resolve_reference(cls, info: strawberry.types.Info, id: strawberry.ID):
@@ -43,13 +38,13 @@ class PreferenceTagEntityGQLModel:
         return self.created
 
     @strawberry.field(description="""user who created this tag""")
-    async def created_by(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
-        result = await UserGQLModel.resolve_reference(info=info, id=self.createdby)
+    async def createdby(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
+        result = await UserGQLModel.resolve_reference(id=self.createdby)
         return result
 
     strawberry.field(description="""user who created this tag""")
-    async def created_by(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
-        result = await UserGQLModel.resolve_reference(info=info, id=self.createdby)
+    async def createdby(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
+        result = await UserGQLModel.resolve_reference(id=self.createdby)
         return result
 
     @strawberry.field(description="""tag value, can be "red", "2023", etc. """)
@@ -98,14 +93,14 @@ entity_type_ids = {
 }
 
 # list of hardwired models for tags
-tags_description = """Returns list of hardwired models for tags."""
+tags_description = """Returns page of hardwired models for tags."""
 @strawberry.field(description=tags_description)
 async def preference_entity_tags(info: strawberry.types.Info) -> List["PreferenceEntityIdGQLModel"]:
     result = list(map(lambda item: {"id": item[0], "name": item[1]._type_definition.name}, entity_type_ids.items()))
     return result
 
 # list of tags for the entity
-tags_description = """Returns list of tags for the entity."""
+tags_description = """Returns page of tags for the entity."""
 @strawberry.field(description=tags_description)
 async def preference_tags_for_entity(info: strawberry.types.Info, entity_id: strawberry.ID) -> List["PreferenceTagEntityGQLModel"]:
     actingUser = getUser(info)
@@ -115,7 +110,7 @@ async def preference_tags_for_entity(info: strawberry.types.Info, entity_id: str
     return result
 
 # list of entities labeled by tags
-entities_description = """Returns list of entities labeled by tags."""
+entities_description = """Returns page of entities labeled by tags."""
 @strawberry.field(description=entities_description)
 async def preference_entities(info: strawberry.types.Info, tags: List[strawberry.ID]) -> List["PreferenceTagEntityGQLModel"]:
     # TODO

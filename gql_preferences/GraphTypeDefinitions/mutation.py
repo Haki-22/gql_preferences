@@ -17,4 +17,32 @@ class Mutation:
 
     from .TagEntityGQLModel import tag_remove_from_entity
     tag_remove_from_entity = tag_remove_from_entity
+
+    #############################################################
+    #
+    # Preference Settings Type
+    #
+    #############################################################
+
+    from .PreferenceSettingsTypeGQLModel import preference_settings_type_insert
+    preference_settings_type_insert = preference_settings_type_insert
+    
+    from .PreferenceSettingsTypeGQLModel import preference_settings_type_update
+    preference_settings_type_update = preference_settings_type_update
+
+    from .PreferenceSettingsTypeGQLModel import preference_settings_type_delete
+    preference_settings_type_delete = preference_settings_type_delete
+
+    #############################################################
+    #
+    # Preference Settings 
+    #
+    #############################################################
+
+    from .PreferenceSettingsGQLModel import preference_settings_insert
+
+    from .PreferenceSettingsGQLModel import preference_settings_update
+
+    from .PreferenceSettingsGQLModel import preference_settings_delete
+
     pass
