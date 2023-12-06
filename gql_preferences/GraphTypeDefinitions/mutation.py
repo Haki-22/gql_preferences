@@ -45,4 +45,16 @@ class Mutation:
 
     from .PreferenceSettingsGQLModel import preference_settings_delete
 
+    #############################################################
+    #
+    # User settings 
+    #
+    #############################################################
+
+    from .UserSettingsGQLModel import preference_user_settings_type_insert
+
+    from .UserSettingsGQLModel import preference_user_settings_type_update
+
+    from .UserSettingsGQLModel import preference_user_settings_delete
+
     pass

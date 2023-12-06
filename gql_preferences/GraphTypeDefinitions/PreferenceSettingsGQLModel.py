@@ -20,14 +20,15 @@ from ._GraphResolvers import(
 )
 
 PreferenceSettingsTypeGQLModel = Annotated["PreferenceSettingsTypeGQLModel", strawberry.lazy(".PreferenceSettingsTypeGQLModel")]
+UserGQLModel = Annotated["UserGQLModel", strawberry.lazy(".externals")]
 
-@strawberry.federation.type(keys=["id"], description="Entity representing preference setting")
+@strawberry.federation.type(keys=["id"], description="Entity representing preference setting / value of a preference settings type like English or Dark")
 class PreferenceSettingsGQLModel(BaseGQLModel):
     """
     Entity representing preference setting of parent Preference Settings Type
     """
     @classmethod
-    def getLoadera(cls, info):
+    def getLoader(cls, info):
         return getLoaders(info).preference_settings
     
     # @classmethod
@@ -46,15 +47,26 @@ class PreferenceSettingsGQLModel(BaseGQLModel):
     def order(self) -> int:
         return self.order if self.order else 0
     
-    @strawberry.field(description="Default preference settings of a parent type (1=Default, 0=Not-default)")
+    """ @strawberry.field(description="Default preference settings of a parent type (1=Default, 0=Not-default)")
     def default_settings(self) -> int:
-        return self.default_settings
+        return self.default_settings """
+    
+    @strawberry.field(description="Retrieves the preference_settings_type_id ")
+    def preference_settings_type_id(self) -> UUID:
+        return self.preference_settings_type_id
+
 
     @strawberry.field(description="Retrieves the Preference Settings Type")
     async def type(self, info: strawberry.types.Info) -> Optional["PreferenceSettingsTypeGQLModel"]:
         from .PreferenceSettingsTypeGQLModel import PreferenceSettingsTypeGQLModel
         result = None if self.preference_settings_type_id is None else await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=self.preference_settings_type_id)
         return result
+    
+    """ @strawberry.field(description="Retrieves users that have this settings")
+    async def user_ids(self, info: strawberry.types.Info) -> Optional["UserGQLModel"]:
+        from .externals import UserGQLModel
+        #print(self.userids, "neco")
+        return await UserGQLModel.resolve_array_reference(id=self.userids) """
     
 #############################################################
 #
@@ -92,11 +104,41 @@ async def preference_settings_page(self, info: strawberry.types.Info, skip: int 
     return await loader.page(skip, limit, where=wf)
 
 
-
 # Query for searching preference settings  by ID
 @strawberry.field(description="Returns Preference settings by ID")
 async def preference_settings_by_id(self, info: strawberry.types.Info, id: UUID) -> Optional[PreferenceSettingsGQLModel]:
     return await PreferenceSettingsGQLModel.resolve_reference(info=info, id=id)
+
+""" # Query default settings 
+@strawberry.field(description="Returns default preference settings page")
+async def preference_settings_default_page(self, info: strawberry.types.Info, skip: int = 0, limit: int = 20) -> List[PreferenceSettingsGQLModel]:
+    loader = getLoaders(info).preference_settings
+    result = await loader.filter_by(default_settings=True)
+    return result """
+
+""" # Query for searching default preference settings for a type
+@strawberry.field(description="Returns default preference settings for a type")
+async def preference_settings_default_by_type_id(self, info: strawberry.types.Info, type_id: UUID) -> List[PreferenceSettingsGQLModel]:
+    loader = getLoaders(info).preference_settings
+    result = await loader.filter_by(preference_settings_type_id=type_id, default_settings=True)
+    return result
+ """
+
+####### filter by nejde pouzit s ARRAY, porovnana ID=ID
+""" # Query for a page of a user settings
+@strawberry.field(description="Returns preference settings page for a user")
+async def user_settings_page(self, info: strawberry.types.Info, skip: int = 0, limit: int = 20) -> List[PreferenceSettingsGQLModel]:
+    loader = getLoaders(info).preference_settings
+    actingUser = getUser(info)
+    actingUserId = actingUser["id"]
+    print(actingUserId, "user_id")
+    #result = await loader.filter_by(userids=actingUserId)
+    #print(self.userids, "userids")
+    
+    result = await loader.filter_by(userids=actingUserId)
+    return result
+ """
+
 
 #####################################################################
 #

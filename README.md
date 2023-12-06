@@ -27,7 +27,7 @@ SearchById
 - PreferenceSettings (Types)
 
 - Query:
-```python
+```
 query PSQuery {
  preferenceSettingsTypePage {
     id
@@ -47,7 +47,7 @@ query PSQuery {
 
  ```
 - Mutation:
-```python
+```
 mutation PSTInsert {
   preferenceSettingsTypeInsert(preferenceSettingsType: {name: "Typ"}) {
     id
@@ -81,8 +81,6 @@ mutation PSTInsert {
 
 Copy DataLoaders?
 
-Preference Settings pro uživatele (JSON string či tabulka?)
-
 External ID? - externals.py
 
  - přidat jakými tagy je entita označena, což bude něco takového:
@@ -99,6 +97,10 @@ async def preference_tags_for_entity(info: strawberry.types.Info, entity_id: str
     return result
 ```
 
+Vše jako preference :)
+
+Relační tabulka: Buď bude obsahovat ke každému uživateli všechny typay a hodnoty (zároveň se jmény), nebo bude frontend defaultně brát defaultní hodnoty z typů a pokud má uživatel jiné tak je načte z relační tabulky
+
 ## ?
 
 TagType - je v GraphTypeDefinitions/TaEntityGQLModel.entity_type_ids  
@@ -112,6 +114,28 @@ order - client side?
 Result entity?
 
 
+```
+query MyQuery {
+  defaultPreferenceSettingsByTypeId(
+    typeId: "90838aab-d06e-445e-9a2e-d3c55bc7cb90"
+  ) {
+    id
+    name
+    type {
+      id
+      name
+      preferenceSettings {
+        nameEn
+        id
+      }
+    }
+  }
+}
+```
+
+filter_by nejde pouzit s ARRAY, porovnana ID=ID PreferenceSettingsGQLModel -> user_settings_page
+
+Pokud nenajde user settings -> default settings?
 
 ## Zadání:
 

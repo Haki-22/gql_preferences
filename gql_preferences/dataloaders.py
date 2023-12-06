@@ -11,13 +11,15 @@ from gql_preferences.DBDefinitions import (
 
     PreferenceSettingsTypeModel,
     PreferenceSettingsModel,
+    UserSettingsModel
 )
 
 dbmodels = {
     "tags": TagModel,
     "tagentities" : TagEntityModel,
     "preference_settings_types" : PreferenceSettingsTypeModel,
-    "preference_settings": PreferenceSettingsModel
+    "preference_settings": PreferenceSettingsModel,
+    "user_settings": UserSettingsModel,
 }
 
 def createDataLoders(asyncSessionMaker, models=dbmodels):

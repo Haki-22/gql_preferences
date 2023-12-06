@@ -33,7 +33,7 @@ class PreferenceSettingsTypeModel(BaseModel):
     # Foreign key relationship to the user who changed the type of preferences
     changedby = UUIDFKey(comment="Foreign key to the user who has changed this preference type")
 
-    #default_preference_settings = Column(Uuid, comment="Default preference settings ID")
+    default_preference_settings_id = UUIDFKey(comment="Default preference settings ID")
 
     #order (Preference Settings Type)
     order = Column(Integer, comment="order")

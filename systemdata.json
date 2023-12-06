@@ -1826,17 +1826,21 @@
         {
           "id": "89838aab-d06e-445e-9a2e-d3c55bc7cb90",
           "name": "barevny motiv",
-          "name_en": "theme"
+          "name_en": "theme",
+          "default_preference_settings_id":"90838aab-d06e-445e-9a2e-d3c55bc7cb90"
         },
         {
           "id": "898a8aab-d06e-445e-982e-d3c55bc7cb90",
           "name": "Jazyk",
-          "name_en": "language"
+          "name_en": "language",
+          "default_preference_settings_id":"918a8aab-d06e-445e-982e-d3c55bc7cb90"
         },
         {
           "id": "89838aab-d06e-445e-982a-d3c55bc7cb90",
           "name": "Notifikace",
-          "name_en": "notifications"
+          "name_en": "notifications",
+          "default_preference_settings_id":"928a8aab-d06e-445e-982e-d3c55bc7cb90"
+          
         }
       ],
 
@@ -1845,8 +1849,7 @@
           "id": "90838aab-d06e-445e-9a2e-d3c55bc7cb90",
           "preference_settings_type_id":"89838aab-d06e-445e-9a2e-d3c55bc7cb90",
           "name": "Světlý",
-          "name_en": "Light",
-          "default_settings":true
+          "name_en": "Light"
         },
         {
             "id": "90838aab-d06e-445e-9a2e-d3c55bc7cb91",
@@ -1858,8 +1861,7 @@
           "id":"918a8aab-d06e-445e-982e-d3c55bc7cb90",
           "preference_settings_type_id": "898a8aab-d06e-445e-982e-d3c55bc7cb90",
           "name": "Čeština",
-          "name_en": "Czech",
-          "default_settings":true
+          "name_en": "Czech"
         },
         {
             "id":"918a8aab-d06e-445e-982e-d3c55bc7cb91",
@@ -1871,8 +1873,7 @@
           "id":"928a8aab-d06e-445e-982e-d3c55bc7cb90",
           "preference_settings_type_id": "89838aab-d06e-445e-982a-d3c55bc7cb90",
           "name": "Zapnute",
-          "name_en": "Turned on",
-          "default_settings":true
+          "name_en": "Turned on"
         },
         {
             "id":"928a8aab-d06e-445e-982e-d3c55bc7cb91",
@@ -1880,6 +1881,23 @@
             "name": "Vypnute",
             "name_en": "Turned off"
           }
+      ],
+
+      "user_settings":[
+        {
+            "id": "11838aab-d06e-445e-9a2e-d3c55bc7cb11",
+            "user_id": "f8089aa6-2c4a-4746-9503-105fcc5d054c",
+            "preference_settings_type_id":"89838aab-d06e-445e-9a2e-d3c55bc7cb90",
+            "preference_settings_id":"90838aab-d06e-445e-9a2e-d3c55bc7cb90"
+        },
+        {
+            "id": "12838aab-d06e-445e-9a2e-d3c55bc7cb12",
+            "user_id": "f8089aa6-2c4a-4746-9503-105fcc5d054c",
+            "preference_settings_type_id":"898a8aab-d06e-445e-982e-d3c55bc7cb90",
+            "preference_settings_id":"918a8aab-d06e-445e-982e-d3c55bc7cb90"
+        }
+        
       ]
+
       
 }

@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import Column, String, DateTime, JSON, Uuid, ForeignKey, Integer, Boolean
+from sqlalchemy import Column, String, DateTime, JSON, Uuid, ForeignKey, Integer, Boolean, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -38,7 +38,9 @@ class PreferenceSettingsModel(BaseModel):
     #order in parent entity (Preference Settings Type)
     order = Column(Integer, comment="order in parent entity")
 
-    default_settings = Column(Boolean,comment="is it default preference settings? True=Default", default=False)
+    #default_settings = Column(Boolean,comment="is it default preference settings? True=Default", default=False)
+
+    #userids = Column(ARRAY(Uuid), comment="Array of user IDs with this preference setting")
 
     #Relationship to parent preference settings type
     type = relationship("PreferenceSettingsTypeModel", back_populates="preference_settings", uselist=False)

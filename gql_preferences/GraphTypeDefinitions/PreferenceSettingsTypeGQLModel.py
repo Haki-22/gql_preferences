@@ -21,7 +21,7 @@ from ._GraphResolvers import(
 
 PreferenceSettingsGQLModel = Annotated["PreferenceSettingsGQLModel", strawberry.lazy(".PreferenceSettingsGQLModel")]
 
-@strawberry.federation.type(keys=["id"], description="Entity representing a category of preference settings")
+@strawberry.federation.type(keys=["id"], description="Entity representing types of preference settings like language, theme")
 class PreferenceSettingsTypeGQLModel(BaseGQLModel):
     @classmethod
     async def resolve_reference(cls, info: strawberry.types.Info, id: UUID):
@@ -67,7 +67,7 @@ class PreferenceSettingsTypeGQLModel(BaseGQLModel):
         return result
     
     @strawberry.field(description="Preference settings type's order")
-    def order(self) -> int:
+    def order(self,  info: strawberry.types.Info) -> Optional[int]:
         return self.order if self.order else 0
     
     @strawberry.field(description="Preference settings")
@@ -75,6 +75,10 @@ class PreferenceSettingsTypeGQLModel(BaseGQLModel):
         loader = getLoaders(info).preference_settings
         rows = await loader.filter_by(preference_settings_type_id=self.id)
         return rows
+    
+    @strawberry.field(description="Preference settings type's default settings")
+    def default_preference_settings_id(self,  info: strawberry.types.Info) -> Optional[UUID]:
+        return self.default_preference_settings_id
 
 #############################################################
 #
@@ -101,13 +105,16 @@ class PreferenceSettingsTypeWhereFilter:
 
     preference_settings: PreferenceSettingsWhereFilter
 
-@strawberry.field(description="Retrieves the preference Settings type")
-async def preference_settings_type_page(self, info: strawberry.types.Info, skip: int = 0, limit: int = 10,
-    where: Optional[PreferenceSettingsTypeWhereFilter] = None) -> List[PreferenceSettingsTypeGQLModel]:
-    
+# Define the function without the decorator
+async def preference_settings_type_page_function(self, info: strawberry.types.Info, skip: int = 0, limit: int = 10,
+                                       where: Optional[PreferenceSettingsTypeWhereFilter] = None) -> List[PreferenceSettingsTypeGQLModel]:
     loader = getLoaders(info).preference_settings_types
     wf = None if where is None else strawberry.asdict(where)
     return await loader.page(skip, limit, where=wf)
+
+# Decorate the function with strawberry
+preference_settings_type_page = strawberry.field(description="Retrieves the preference Settings type page")(preference_settings_type_page_function)
+
 
 
 import uuid
@@ -116,6 +123,32 @@ import uuid
 async def preference_settings_type_by_id(self, info: strawberry.types.Info, id: UUID) -> Optional[PreferenceSettingsTypeGQLModel]:
     return await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=id)
 
+""" @strawberry.field(description="Returns default preference settings in type by it's ID")
+async def preference_settings_default_by_type_id(self, info: strawberry.types.Info, type_id: UUID) -> Optional[UUID]:
+    result = await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=type_id)
+    return result.default_preference_settings_id
+ """
+#Returns all preference settings types IDs in an arrays
+async def preference_settings_type_ids(self, info: strawberry.types.Info) -> List[UUID]:
+    typeloader = getLoaders(info).preference_settings_types
+    rows = await typeloader.page()
+    result = []
+    for row in rows:
+        #if row.id:     
+        #print(row.id, "row.id")
+        result.append(row.id)
+    return result
+
+# Query for searching default preference settings for a type
+
+async def preference_settings_default_by_type_id_func(self, info: strawberry.types.Info, id: UUID) -> List["PreferenceSettingsGQLModel"]:
+    result = await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=id)
+    preference_settings_id = result.default_preference_settings_id
+    loader = getLoaders(info).preference_settings
+    result = await loader.filter_by(id=preference_settings_id)
+    return result
+
+preference_settings_default_by_type_id = strawberry.field(description="Returns default preference settings for a type")(preference_settings_default_by_type_id_func)
 #####################################################################
 #
 # Mutations
@@ -145,6 +178,8 @@ class PreferenceSettingsTypeUpdateGQLModel:
 
     name: Optional[str] = strawberry.field(description="Preference settings type name", default=None)
     name_en: Optional[str] = strawberry.field(description="Preference settings type english name", default="")
+    default_preference_settings_id: Optional[UUID] = strawberry.field(description="ID of default preference settings", default=None)
+
     changedby: strawberry.Private[uuid.UUID] = None
 
 ################# 

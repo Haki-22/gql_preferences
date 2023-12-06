@@ -12,7 +12,8 @@ from gql_preferences.DBDefinitions import (
     TagModel,
     TagEntityModel, 
     PreferenceSettingsTypeModel,
-    PreferenceSettingsModel
+    PreferenceSettingsModel,
+    UserSettingsModel
 )
 import random
 import itertools
@@ -230,7 +231,8 @@ async def initDB(asyncSessionMaker):
             TagModel,
             TagEntityModel,
             PreferenceSettingsTypeModel,
-            PreferenceSettingsModel
+            PreferenceSettingsModel,
+            UserSettingsModel
         ]
 
     jsonData = get_demodata()
