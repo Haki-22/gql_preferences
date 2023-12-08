@@ -59,6 +59,14 @@ mutation PSTInsert {
 
 - Copy of GraphResolvers, BaeGQLMode, utils (where), RBCAObject
 
+### till 8.12.
+
+- PreferenceEntityTags
+
+- PreferenceTags
+
+- Settings as a user preference, default is set in frontend
+
 ---
 
 ## Notes
@@ -101,7 +109,9 @@ Vše jako preference :)
 
 Relační tabulka: Buď bude obsahovat ke každému uživateli všechny typay a hodnoty (zároveň se jmény), nebo bude frontend defaultně brát defaultní hodnoty z typů a pokud má uživatel jiné tak je načte z relační tabulky, přece jen se frontend do defaultu načítá...
 
-# Use the same entity resolution? (return whole enitty not just ID) 
+
+
+#### Use the same entity resolution? (return whole enitty not just ID) 
 
 - Whole GQL model for EntityTypes? 
 
@@ -111,7 +121,7 @@ Relační tabulka: Buď bude obsahovat ke každému uživateli všechny typay a 
   def entity_type_id(self) -> UUID:
       return self.entity_type_id
 
-PreferenceEntityGQL
+#### PreferenceEntityGQL
 
 - Mutations
 
