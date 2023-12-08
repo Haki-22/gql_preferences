@@ -2,19 +2,63 @@ import strawberry
 
 @strawberry.type
 class Mutation:
-    
-    from .tagModel import tag_insert
-    tag_insert = tag_insert
+   
+    #############################################################
+    #
+    #  Tag Model
+    #
+    #############################################################    
 
-    from .tagModel import tag_update
-    tag_update = tag_update
+    from .PreferenceTagGQLModel import preference_tag_insert
 
-    from .tagModel import tag_delete
-    tag_delete = tag_delete
+    from .PreferenceTagGQLModel import preference_tag_update
 
-    from .tagEntityModel import tag_add_to_entity
-    tag_add_to_entity = tag_add_to_entity
+    from .PreferenceTagGQLModel import preference_tag_delete
 
-    from .tagEntityModel import tag_remove_from_entity
-    tag_remove_from_entity = tag_remove_from_entity
+    #############################################################
+    #
+    # Tag entities
+    #
+    #############################################################
+
+    from .PreferenceTagEntityGQLModel import preference_tag_add_to_entity
+
+    from .PreferenceTagEntityGQLModel import preference_tag_remove_from_entity
+
+    #############################################################
+    #
+    # Preference Settings Type
+    #
+    #############################################################
+
+    from .PreferenceSettingsTypeGQLModel import preference_settings_type_insert
+ 
+    from .PreferenceSettingsTypeGQLModel import preference_settings_type_update
+
+    from .PreferenceSettingsTypeGQLModel import preference_settings_type_delete
+
+    #############################################################
+    #
+    # Preference Settings 
+    #
+    #############################################################
+
+    from .PreferenceSettingsGQLModel import preference_settings_insert
+
+    from .PreferenceSettingsGQLModel import preference_settings_update
+
+    from .PreferenceSettingsGQLModel import preference_settings_delete
+
+    #############################################################
+    #
+    # User settings 
+    #
+    #############################################################
+
+    from .PreferenceUserSettingsGQLModel import preference_user_settings_type_insert
+
+    from .PreferenceUserSettingsGQLModel import preference_user_settings_type_update
+
+    from .PreferenceUserSettingsGQLModel import preference_user_settings_delete
+
     pass

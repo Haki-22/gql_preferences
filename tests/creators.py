@@ -37,7 +37,7 @@ def createDBTest(tableName, dbModel):
     return result_test
 
 
-def compare(rowa, rowb, attributeNames, skipattributes=["lastchange", "created", "createdBy", "changedBy"]):
+def compare(rowa, rowb, attributeNames, skipattributes=["lastchange", "created", "createdby", "changedby"]):
     for attName in attributeNames:
         if attName in skipattributes: continue
         
@@ -73,7 +73,7 @@ def createReferenceQueryStAtts(gqltype):
         ' }])' +
         '{' +
         f'...on {gqltype}' + 
-        '{ id createdBy { id } changedBy { id } lastchange created }'+
+        '{ id createdby { id } changedby { id } lastchange created }'+
         '}' + 
         '}')
     return query

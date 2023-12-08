@@ -1,20 +1,9 @@
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import Column, String
+from typing import Optional
 
 DeclarativeBase = declarative_base()
 BaseModel = DeclarativeBase
-
-def UUIDFKey(*, ForeignKey=None, nullable=False):
-    if ForeignKey is None:
-        return Column(
-            String, index=True, nullable=nullable
-        )
-    else:
-        return Column(
-            ForeignKey, index=True, nullable=nullable
-        )
-    
-
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -22,7 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 
-async def startEngine(connectionstring, makeDrop=False, makeUp=True):
+async def startEngine(connectionstring, makeDrop=True, makeUp=True):
     """Provede nezbytne ukony a vrati asynchronni SessionMaker """
     asyncEngine = create_async_engine(connectionstring) 
 
