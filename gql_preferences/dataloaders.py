@@ -6,20 +6,20 @@ from sqlalchemy import select, update
 from uoishelpers.dataloaders import createIdLoader
 
 from gql_preferences.DBDefinitions import (
-    TagModel, 
-    TagEntityModel,
+    PreferenceTagModel, 
+    PreferenceTagEntityModel,
 
     PreferenceSettingsTypeModel,
     PreferenceSettingsModel,
-    UserSettingsModel
+    PreferenceUserSettingsModel
 )
 
 dbmodels = {
-    "tags": TagModel,
-    "tagentities" : TagEntityModel,
+    "preferedtags": PreferenceTagModel,
+    "preferedtagentities" : PreferenceTagEntityModel,
     "preference_settings_types" : PreferenceSettingsTypeModel,
     "preference_settings": PreferenceSettingsModel,
-    "user_settings": UserSettingsModel,
+    "user_settings": PreferenceUserSettingsModel,
 }
 
 def createDataLoders(asyncSessionMaker, models=dbmodels):

@@ -2,21 +2,28 @@ import strawberry
 
 @strawberry.type
 class Mutation:
-    
-    from .TagGQLModel import tag_insert
-    tag_insert = tag_insert
+   
+    #############################################################
+    #
+    #  Tag Model
+    #
+    #############################################################    
 
-    from .TagGQLModel import tag_update
-    tag_update = tag_update
+    from .PreferenceTagGQLModel import tag_insert
 
-    from .TagGQLModel import tag_delete
-    tag_delete = tag_delete
+    from .PreferenceTagGQLModel import tag_update
 
-    from .TagEntityGQLModel import tag_add_to_entity
-    tag_add_to_entity = tag_add_to_entity
+    from .PreferenceTagGQLModel import tag_delete
 
-    from .TagEntityGQLModel import tag_remove_from_entity
-    tag_remove_from_entity = tag_remove_from_entity
+    #############################################################
+    #
+    # Tag entities
+    #
+    #############################################################
+
+    from .PreferenceTagEntityGQLModel import tag_add_to_entity
+
+    from .PreferenceTagEntityGQLModel import tag_remove_from_entity
 
     #############################################################
     #
@@ -51,10 +58,10 @@ class Mutation:
     #
     #############################################################
 
-    from .UserSettingsGQLModel import preference_user_settings_type_insert
+    from .PreferenceUserSettingsGQLModel import preference_user_settings_type_insert
 
-    from .UserSettingsGQLModel import preference_user_settings_type_update
+    from .PreferenceUserSettingsGQLModel import preference_user_settings_type_update
 
-    from .UserSettingsGQLModel import preference_user_settings_delete
+    from .PreferenceUserSettingsGQLModel import preference_user_settings_delete
 
     pass

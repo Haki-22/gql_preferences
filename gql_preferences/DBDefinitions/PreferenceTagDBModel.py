@@ -4,7 +4,7 @@ from .Base import BaseModel
 from. uuid import UUIDFKey, UUIDColumn
 
 # Define a SQLAlchemy model for the 'preferedtags' table
-class TagModel(BaseModel):
+class PreferenceTagModel(BaseModel):
     # Table name
     __tablename__ = "preferedtags"
     
@@ -16,6 +16,9 @@ class TagModel(BaseModel):
 
     # Name of the tag
     name = Column(String, comment="Name of the tag")
+    
+    # Name in english for the tag      
+    name_en =Column(String, comment="English name for the preference settings (name_en:czech, name_en:Light)")
 
     # Timestamp for when the tag was created
     created = Column(DateTime, server_default=sqlalchemy.sql.func.now(), comment="Timestamp for when the tag was created")

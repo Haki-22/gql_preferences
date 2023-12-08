@@ -1810,16 +1810,6 @@
             "id": "7a4c0d3e-2e3a-4ea0-9037-baa38d8400d2",
             "author_id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120003",
             "name": "sledované"
-        },
-        {
-            "id": "b8eebb07-91d5-4d13-8adf-64f4b6de7d06",
-            "author_id": "f8089aa6-2c4a-4746-9503-105fcc5d054c",
-            "name": "partneři"
-        },
-        {
-            "id": "89838aab-d06e-445e-982e-d3c55bc7cb90",
-            "author_id": "f8089aa6-2c4a-4746-9503-105fcc5d054c",
-            "name": "sledované"
         }
     ],
     "preference_settings_types":[

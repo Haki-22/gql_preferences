@@ -19,7 +19,7 @@ def resolve_name(self) -> str:
     return self.name
 
 @strawberry.field(description="""English name""")
-def resolve_name_en(self) -> str:
+def resolve_name_en(self) -> typing.Optional[str]:
     return self.name_en
 
 @strawberry.field(description="""Time of last update""")

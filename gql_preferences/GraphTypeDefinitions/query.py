@@ -2,17 +2,24 @@ import strawberry
 @strawberry.type(description="""Root query""")
 class Query:
 
-    from .TagEntityGQLModel import preference_entities
-    preference_entities = preference_entities
-    
-    from .TagGQLModel import preference_tags
-    preference_tags = preference_tags
-    
-    from .TagEntityGQLModel import preference_entity_tags
-    preference_entity_tags = preference_entity_tags
+    from .PreferenceTagGQLModel import preference_tags
 
-    from .TagGQLModel import tag_by_id
-    tag_by_id = tag_by_id
+    from .PreferenceTagGQLModel import preference_tag_by_id
+
+    from .PreferenceTagGQLModel import preference_tags_page
+
+    #############################################################
+    #
+    # Tag entities
+    #
+    #############################################################
+
+    from .PreferenceTagEntityGQLModel import preference_entities_labeled
+ 
+    from .PreferenceTagEntityGQLModel import preference_entity_types
+
+    from .PreferenceTagEntityGQLModel import preference_tags_for_entity
+
 
     #############################################################
     #
@@ -50,9 +57,9 @@ class Query:
     #
     #############################################################
 
-    from .UserSettingsGQLModel import preference_settings_user_page
+    from .PreferenceUserSettingsGQLModel import preference_settings_user_page
 
-    from .UserSettingsGQLModel import preference_settings_user_in_type
+    from .PreferenceUserSettingsGQLModel import preference_settings_user_in_type
 
 
     

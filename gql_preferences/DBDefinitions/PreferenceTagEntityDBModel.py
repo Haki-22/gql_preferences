@@ -5,7 +5,7 @@ from .Base import BaseModel
 from. uuid import UUIDFKey, UUIDColumn
 
 # Define a SQLAlchemy model for the 'preferedtagentities' table
-class TagEntityModel(BaseModel):
+class PreferenceTagEntityModel(BaseModel):
     # Table name
     __tablename__ = "preferedtagentities"
     
@@ -19,10 +19,10 @@ class TagEntityModel(BaseModel):
     tag_id = Column(ForeignKey("preferedtags.id"), index=True, comment="Foreign key to the tag associated with the entity")
 
     # Foreign key relationship to the entity
-    entity_id = UUIDFKey( comment="Foreign key to the entity")
+    entity_id = UUIDFKey( comment="Foreign key to the entity, which is labeled")
 
     # Foreign key relationship to the entity type
-    entity_type_id = UUIDFKey(comment="Foreign key to the entity type")
+    entity_type_id = UUIDFKey(comment="Hardwired foreign key to the entity type like User / Group,")
 
     # Timestamp for when the tag entity was created
     created = Column(DateTime, server_default=sqlalchemy.sql.func.now(), comment="Timestamp for when the tag entity was created")

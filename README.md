@@ -99,19 +99,35 @@ async def preference_tags_for_entity(info: strawberry.types.Info, entity_id: str
 
 Vše jako preference :)
 
-Relační tabulka: Buď bude obsahovat ke každému uživateli všechny typay a hodnoty (zároveň se jmény), nebo bude frontend defaultně brát defaultní hodnoty z typů a pokud má uživatel jiné tak je načte z relační tabulky
+Relační tabulka: Buď bude obsahovat ke každému uživateli všechny typay a hodnoty (zároveň se jmény), nebo bude frontend defaultně brát defaultní hodnoty z typů a pokud má uživatel jiné tak je načte z relační tabulky, přece jen se frontend do defaultu načítá...
+
+# Use the same entity resolution? (return whole enitty not just ID) 
+
+- Whole GQL model for EntityTypes? 
+
+(PreferenceTagEntityGQLModel)
+ 
+@strawberry.field(description="Retrieves the entity_type_id ") 
+  def entity_type_id(self) -> UUID:
+      return self.entity_type_id
+
+PreferenceEntityGQL
+
+- Mutations
+
+- tags? How to search with more of them
+
+- preferenceEntitiesLabeled does it search for all?
 
 ## ?
 
 TagType - je v GraphTypeDefinitions/TaEntityGQLModel.entity_type_ids  
 
-PreferenceSettings jako JSON String k uživateli?
-
 Při updatu Preference Settings, neměla by nastat změna lastchange u Preference Settings Type?
 
-order - client side?
-
 Result entity?
+
+name_en u tagů? Nebo si jména vytváří user?
 
 
 ```

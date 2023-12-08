@@ -1,7 +1,7 @@
 from .Base import BaseModel, ComposeConnectionString, startEngine
 
-from .TagEntityDBModel import TagEntityModel
-from .TagDBModel import TagModel
+from .PreferenceTagDBModel import PreferenceTagModel
+from .PreferenceTagEntityDBModel import PreferenceTagEntityModel
 from .PreferenceSettingsTypeDBModel import PreferenceSettingsTypeModel
 from .PreferenceSettingsDBModel import PreferenceSettingsModel
-from .UserSettingsDBModel import UserSettingsModel
+from .PreferenceUserSettingsDBModel import PreferenceUserSettingsModel

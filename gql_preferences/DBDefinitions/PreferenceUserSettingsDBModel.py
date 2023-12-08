@@ -7,7 +7,7 @@ from .Base import BaseModel
 from. uuid import UUIDFKey, UUIDColumn
 
 # Relationship table for user defined settings (value) in a preferencesettings type (language:english theme:dark)
-class UserSettingsModel(BaseModel):
+class PreferenceUserSettingsModel(BaseModel):
     # Table name
     __tablename__ = "user_settings"
 

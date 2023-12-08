@@ -7,7 +7,18 @@ from ..dataloaders import getLoaders, getUser
 
 from .BaseGQLModel import BaseGQLModel
 
-PreferenceTagEntityGQLModel = Annotated["PreferenceTagEntityGQLModel", lazy(".TagEntityGQLModel")]
+from ._GraphResolvers import(
+    resolve_id,
+    resolve_name,
+    resolve_name_en,
+    resolve_changedby,
+    resolve_created,
+    resolve_lastchange,
+    resolve_createdby,
+    resolve_rbacobject,
+)
+
+PreferenceTagEntityGQLModel = Annotated["PreferenceTagEntityGQLModel", lazy(".PreferenceTagEntityGQLModel")]
 UserGQLModel = Annotated["UserGQLModel", lazy(".externals")]
 
 @strawberry.federation.type(
@@ -16,42 +27,17 @@ UserGQLModel = Annotated["UserGQLModel", lazy(".externals")]
 )
 class PreferenceTagGQLModel(BaseGQLModel):
     @classmethod
-    async def resolve_reference(cls, info: strawberry.types.Info, id: strawberry.ID):
-        if id is None:
-            return None
-        loader = getLoaders(info).tags
-        result = await loader.load(id)
-        if result is not None:
-            result._type_definition = cls._type_definition  # little hack :)
-        return result
-
-    @strawberry.field(description="""primary key""")
-    async def id(self, info: strawberry.types.Info) -> strawberry.ID:
-        return self.id
-
-    @strawberry.field(description="""time stamp""")
-    async def lastchange(self, info: strawberry.types.Info) -> datetime.datetime:
-        return self.lastchange
-
-    @strawberry.field(description="""date of creation""")
-    async def created(self, info: strawberry.types.Info) -> datetime.datetime:
-        return self.created
-
-    @strawberry.field(description="""user who created this tag""")
-    async def createdby(self, info: strawberry.types.Info) -> Union["UserGQLModel", None]:
-        from .externals import UserGQLModel
-        result = await UserGQLModel.resolve_reference(id=self.createdby)
-        return result
-
-    @strawberry.field(description="""user who updated this tag""")
-    async def changedby(self, info: strawberry.types.Info) -> Union["UserGQLModel", None]:
-        from .externals import UserGQLModel
-        result = await UserGQLModel.resolve_reference(id=self.changedby)
-        return result
-
-    @strawberry.field(description="""tag value, can be "red", "2023", etc. """)
-    async def name(self, info: strawberry.types.Info) -> Union[str, None]:
-        return self.name
+    def getLoader(cls, info):
+        return getLoaders(info).preferedtags
+    
+    id = resolve_id
+    changedby = resolve_changedby
+    lastchange = resolve_lastchange
+    created = resolve_created
+    createdby = resolve_createdby
+    name_en = resolve_name_en
+    name = resolve_name
+    
 
     @strawberry.field(description="""entities marked with this tag""")
     async def links(self, info: strawberry.types.Info) -> List["PreferenceTagEntityGQLModel"]:
@@ -59,6 +45,10 @@ class PreferenceTagGQLModel(BaseGQLModel):
         result = await loader.filter_by(tag_id=self.id)
         return result
 
+    @strawberry.field(description="Retrieves the user")
+    async def author_id(self, info: strawberry.types.Info) -> Optional["UserGQLModel"]:
+        from .externals import UserGQLModel
+        return await UserGQLModel.resolve_reference(id=self.author_id)
 
 
 #####################################################################
@@ -69,10 +59,10 @@ class PreferenceTagGQLModel(BaseGQLModel):
 
 # Query for a page of preference types
 @strawberry.field(description="""Returns a page of tags, [opt.] skip=0, limit=20""")
-async def tags_type_page(
+async def preference_tags_page(
         self, info: strawberry.types.Info, skip: int = 0, limit: int = 20
     ) -> List[PreferenceTagGQLModel]:
-        loader = getLoaders(info).tags
+        loader = getLoaders(info).preferedtags
         result = await loader.page(skip, limit)
         return result
 
@@ -80,14 +70,14 @@ tags_description = """Returns list of tags associated with asking user."""
 @strawberry.field(description=tags_description)
 async def preference_tags(info: strawberry.types.Info) -> List["PreferenceTagGQLModel"]:
     actingUser = getUser(info)
-    loader = getLoaders(info).tags
+    loader = getLoaders(info).preferedtags
     result = await loader.filter_by(author_id=actingUser["id"])
     
     return result
 
 # New query field for searching by ID
 @strawberry.field(description="""Returns a tag by ID""")
-async def tag_by_id(info: strawberry.types.Info, id: strawberry.ID) -> Optional[PreferenceTagGQLModel]:
+async def preference_tag_by_id(info: strawberry.types.Info, id: UUID) -> Optional[PreferenceTagGQLModel]:
     if id is not UUID: # doesnt work :C
         return None
     return await PreferenceTagGQLModel.resolve_reference(info, id)

@@ -23,7 +23,7 @@ PreferenceSettingsTypeGQLModel = Annotated["PreferenceSettingsTypeGQLModel", str
 PreferenceSettingsGQLModel = Annotated["PreferenceSettingsGQLModel", strawberry.lazy(".PreferenceSettingsGQLModel")]
 
 @strawberry.federation.type(keys=["id"], description="Entity representing preference setting for a user")
-class UserSettingsGQLModel(BaseGQLModel):
+class PreferenceUserSettingsGQLModel(BaseGQLModel):
     """
     Entity representing preference setting for a specific user
     """
@@ -123,7 +123,7 @@ async def preference_settings_user_page(self, info: strawberry.types.Info, user_
 
 # Query for a page of a user settings
 @strawberry.field(description="Returns preference settings page for a user")
-async def preference_settings_user_page(self, info: strawberry.types.Info, user_id: Optional[UUID] = None, skip: int = 0, limit: int = 20 ) -> List[UserSettingsGQLModel]:
+async def preference_settings_user_page(self, info: strawberry.types.Info, user_id: Optional[UUID] = None, skip: int = 0, limit: int = 20 ) -> List[PreferenceUserSettingsGQLModel]:
     loader = getLoaders(info).user_settings
     
     if user_id is None:
@@ -134,7 +134,7 @@ async def preference_settings_user_page(self, info: strawberry.types.Info, user_
 
 # Query for a page of a user settings
 @strawberry.field(description="Returns preference settings in a type for a user")
-async def preference_settings_user_in_type(self, info: strawberry.types.Info, preference_settings_type_id: UUID, user_id: Optional[UUID] = None) -> List[UserSettingsGQLModel]:
+async def preference_settings_user_in_type(self, info: strawberry.types.Info, preference_settings_type_id: UUID, user_id: Optional[UUID] = None) -> List[PreferenceUserSettingsGQLModel]:
     loader = getLoaders(info).user_settings
     
     if user_id is None:
@@ -196,8 +196,8 @@ class UserSettingsResultGQLModel:
 For update operation fail should be also stated when bad lastchange has been entered.""")
 
     @strawberry.field(description="Object of CU operation, final version")
-    async def type(self, info: strawberry.types.Info) -> UserSettingsGQLModel:
-        result = await UserSettingsGQLModel.resolve_reference(info=info, id=self.id)
+    async def type(self, info: strawberry.types.Info) -> PreferenceUserSettingsGQLModel:
+        result = await PreferenceUserSettingsGQLModel.resolve_reference(info=info, id=self.id)
         return result
 #
 #####################################################################
