@@ -11,7 +11,7 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
 
-async def startEngine(connectionstring, makeDrop=False, makeUp=True):
+async def startEngine(connectionstring, makeDrop=True, makeUp=True):
     """Provede nezbytne ukony a vrati asynchronni SessionMaker """
     asyncEngine = create_async_engine(connectionstring) 
 

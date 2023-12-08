@@ -67,6 +67,24 @@ mutation PSTInsert {
 
 - Settings as a user preference, default is set in frontend
 
+- fixed entities on external models (UserGQLModel, GroupGQLModel, EventGQLModel, FacilityGQLModel)
+
+### 8.12.
+
+- exxternals.py:
+
+  - Page of tags for entity in external models
+
+  - Specific settings for a user added to User external group
+
+- all strawberry.id changed to UUID
+
+- added another tag entity to systemdata.json -> preference_entities_labeled works
+
+- Every name set to Preference... for easier search in GraphiQL when implemented with others
+
+- links work
+
 ---
 
 ## Notes
@@ -87,29 +105,13 @@ mutation PSTInsert {
 
 ## TODO
 
-Copy DataLoaders?
+Pretify code (Unify)
 
-External ID? - externals.py
+Docker image
 
- - přidat jakými tagy je entita označena, což bude něco takového:
+tests
 
-```python
- # list of tags for the entity
-tags_description = """Returns list of tags for the entity."""
-@strawberry.field(description=tags_description)
-async def preference_tags_for_entity(info: strawberry.types.Info, entity_id: strawberry.ID) -> List["PreferenceTagEntityGQLModel"]:
-    actingUser = getUser(info)
-    actingUserId = actingUser["id"]
-    loader = getLoaders(info).tagentities
-    result = await loader.filter_by(author_id=actingUserId, entity_id=entity_id)
-    return result
-```
-
-Vše jako preference :)
-
-Relační tabulka: Buď bude obsahovat ke každému uživateli všechny typay a hodnoty (zároveň se jmény), nebo bude frontend defaultně brát defaultní hodnoty z typů a pokud má uživatel jiné tak je načte z relační tabulky, přece jen se frontend do defaultu načítá...
-
-
+Fronted loads into default and should search for user specific user settings if there are some -> apply them.
 
 #### Use the same entity resolution? (return whole enitty not just ID) 
 

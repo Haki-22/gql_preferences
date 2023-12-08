@@ -9,11 +9,11 @@ class Mutation:
     #
     #############################################################    
 
-    from .PreferenceTagGQLModel import tag_insert
+    from .PreferenceTagGQLModel import preference_tag_insert
 
-    from .PreferenceTagGQLModel import tag_update
+    from .PreferenceTagGQLModel import preference_tag_update
 
-    from .PreferenceTagGQLModel import tag_delete
+    from .PreferenceTagGQLModel import preference_tag_delete
 
     #############################################################
     #
@@ -21,9 +21,9 @@ class Mutation:
     #
     #############################################################
 
-    from .PreferenceTagEntityGQLModel import tag_add_to_entity
+    from .PreferenceTagEntityGQLModel import preference_tag_add_to_entity
 
-    from .PreferenceTagEntityGQLModel import tag_remove_from_entity
+    from .PreferenceTagEntityGQLModel import preference_tag_remove_from_entity
 
     #############################################################
     #
@@ -32,13 +32,10 @@ class Mutation:
     #############################################################
 
     from .PreferenceSettingsTypeGQLModel import preference_settings_type_insert
-    preference_settings_type_insert = preference_settings_type_insert
-    
+ 
     from .PreferenceSettingsTypeGQLModel import preference_settings_type_update
-    preference_settings_type_update = preference_settings_type_update
 
     from .PreferenceSettingsTypeGQLModel import preference_settings_type_delete
-    preference_settings_type_delete = preference_settings_type_delete
 
     #############################################################
     #

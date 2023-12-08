@@ -182,7 +182,7 @@ class PreferenceSettingsResultGQLModel:
 For update operation fail should be also stated when bad lastchange has been entered.""")
 
     @strawberry.field(description="Object of CU operation, final version")
-    async def type(self, info: strawberry.types.Info) -> PreferenceSettingsGQLModel:
+    async def preference_settings(self, info: strawberry.types.Info) -> PreferenceSettingsGQLModel:
         return await PreferenceSettingsGQLModel.resolve_reference(info=info, id=self.id)
 #
 #####################################################################

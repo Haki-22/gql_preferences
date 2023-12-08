@@ -35,7 +35,7 @@ class PreferenceSettingsTypeGQLModel(BaseGQLModel):
 
     # Fields representing properties of the PreferenceSettings
     @strawberry.field(description="primary key")
-    async def id(self, info: strawberry.types.Info) -> strawberry.ID:
+    async def id(self, info: strawberry.types.Info) -> UUID:
         return self.id
 
     """ @strawberry.field(description="name of the type preference")
@@ -76,9 +76,13 @@ class PreferenceSettingsTypeGQLModel(BaseGQLModel):
         rows = await loader.filter_by(preference_settings_type_id=self.id)
         return rows
     
-    @strawberry.field(description="Preference settings type's default settings")
-    def default_preference_settings_id(self,  info: strawberry.types.Info) -> Optional[UUID]:
-        return self.default_preference_settings_id
+    async def default_preference_settings_func(self,  info: strawberry.types.Info) -> Optional["PreferenceSettingsGQLModel"]:
+        from .PreferenceSettingsGQLModel import PreferenceSettingsGQLModel
+        loader = getLoaders(info).preference_settings
+        result = await PreferenceSettingsGQLModel.resolve_reference(info=info, id=self.default_preference_settings_id)
+        return result
+    
+    default_preference_settings = strawberry.field(description="Preference settings type's default settings")(default_preference_settings_func)
 
 #############################################################
 #
@@ -201,7 +205,7 @@ class PreferenceSettingsTypeResultGQLModel:
 For update operation fail should be also stated when bad lastchange has been entered.""")
 
     @strawberry.field(description="Object of CU operation, final version")
-    async def type(self, info: strawberry.types.Info) -> PreferenceSettingsTypeGQLModel:
+    async def preference_settings_type(self, info: strawberry.types.Info) -> PreferenceSettingsTypeGQLModel:
         result = await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=self.id)
         return result
 #

@@ -2,7 +2,7 @@ import strawberry
 from strawberry import lazy
 import datetime
 from typing import Union, Optional, List, TYPE_CHECKING, Annotated
-from uuid import UUID
+from uuid import UUID, uuid4
 from ..dataloaders import getLoaders, getUser
 
 from .BaseGQLModel import BaseGQLModel
@@ -41,7 +41,7 @@ class PreferenceTagGQLModel(BaseGQLModel):
 
     @strawberry.field(description="""entities marked with this tag""")
     async def links(self, info: strawberry.types.Info) -> List["PreferenceTagEntityGQLModel"]:
-        loader = getLoaders(info).tagentities
+        loader = getLoaders(info).preferedtagentities
         result = await loader.filter_by(tag_id=self.id)
         return result
 
@@ -68,12 +68,10 @@ async def preference_tags_page(
 
 tags_description = """Returns list of tags associated with asking user."""
 @strawberry.field(description=tags_description)
-async def preference_tags(info: strawberry.types.Info) -> List["PreferenceTagGQLModel"]:
+async def preference_tags(self, info: strawberry.types.Info) -> List["PreferenceTagGQLModel"]:
     actingUser = getUser(info)
     loader = getLoaders(info).preferedtags
-    result = await loader.filter_by(author_id=actingUser["id"])
-    
-    return result
+    return await loader.filter_by(author_id=actingUser["id"])
 
 # New query field for searching by ID
 @strawberry.field(description="""Returns a tag by ID""")
@@ -92,27 +90,27 @@ async def preference_tag_by_id(info: strawberry.types.Info, id: UUID) -> Optiona
 import datetime
 
 @strawberry.input(description="""Creates a new tag""")
-class TagInsertGQLModel:
+class PreferenceTagInsertGQLModel:
     name: str = strawberry.field(default="new tag", description="tag name")
-    id: Optional[strawberry.ID] = strawberry.field(default=None, description="optional primary key value of tag, UUID expected")
-    createdby: strawberry.Private[strawberry.ID] = None #strawberry.field(default=None, description="user who created this db record")
-    author_id: strawberry.Private[strawberry.ID] = None #strawberry.field(default=None, description="user who owns this tag")
+    id: Optional[UUID] = strawberry.field(default=None, description="optional primary key value of tag, UUID expected")
+    createdby: strawberry.Private[UUID] = None #strawberry.field(default=None, description="user who created this db record")
+    author_id: strawberry.Private[UUID] = None #strawberry.field(default=None, description="user who owns this tag")
 
 @strawberry.input(description="""Updates the tag""")
-class TagUpdateGQLModel:
-    id: strawberry.ID = strawberry.field(default=None, description="primary key value, aka tag identification")
+class PreferenceTagUpdateGQLModel:
+    id: UUID = strawberry.field(default=None, description="primary key value, aka tag identification")
     name: str = strawberry.field(default=None, description="tag name")
     lastchange: datetime.datetime = strawberry.field(default=None, description="timestamp")
-    updatedby: strawberry.Private[strawberry.ID] = None #strawberry.field(default=None, description="user who updates the tag")
+    updatedby: strawberry.Private[UUID] = None #strawberry.field(default=None, description="user who updates the tag")
 
 @strawberry.input(description="""Removes the tag""")
-class TagDeleteGQLModel:
+class PreferenceTagDeleteGQLModel:
     name: str = strawberry.field(default=None, description="tag name, could be used as an identification")
-    id: Optional[strawberry.ID] = strawberry.field(default=None, description="primary key, aka tag identification")
+    id: Optional[UUID] = strawberry.field(default=None, description="primary key, aka tag identification")
 
 @strawberry.type(description="""result of tag operation""")
-class TagResultGQLModel:
-    id: Union[strawberry.ID, None] = strawberry.field(default=None, description="id of tag")
+class PreferenceTagResultGQLModel:
+    id: Union[UUID, None] = strawberry.field(default=None, description="id of tag")
     msg: str = strawberry.field(default=None, description="""result of operation, should be "ok" or "fail" """)
 
     @strawberry.field(description="""Result of drone operation""")
@@ -121,12 +119,15 @@ class TagResultGQLModel:
         return result
 
 @strawberry.mutation(description="inserts a new tag, if the name is already defined, operation will fail")
-async def tag_insert(self, info: strawberry.types.Info, tag: TagInsertGQLModel) -> TagResultGQLModel:
+async def preference_tag_insert(self, info: strawberry.types.Info, tag: PreferenceTagInsertGQLModel) -> PreferenceTagResultGQLModel:
+    if tag.id is None:
+        tag.id = uuid4()
+    
     actingUser = getUser(info)
-    loader = getLoaders(info).tags
+    loader = getLoaders(info).preferedtags
     tag.changedby = actingUser["id"]
     tag.author_id = actingUser["id"]
-    result = TagResultGQLModel()
+    result = PreferenceTagResultGQLModel()
     rows = await loader.filter_by(name=tag.name, author_id=actingUser["id"])
     row = next(rows, None)
     if row is None:
@@ -139,11 +140,11 @@ async def tag_insert(self, info: strawberry.types.Info, tag: TagInsertGQLModel) 
     return result
 
 @strawberry.mutation(description="""deletes the tag""")
-async def tag_delete(self, info: strawberry.types.Info, tag: TagDeleteGQLModel) -> TagResultGQLModel:
+async def preference_tag_delete(self, info: strawberry.types.Info, tag: PreferenceTagDeleteGQLModel) -> PreferenceTagResultGQLModel:
     actingUser = getUser(info)
-    loader = getLoaders(info).tags
+    loader = getLoaders(info).preferedtags
     
-    result = TagResultGQLModel()
+    result = PreferenceTagResultGQLModel()
     result.id = tag.id
     if tag.id is None:
         # rows = await loader.filter_by(author_id=actingUser["id"])
@@ -162,12 +163,12 @@ async def tag_delete(self, info: strawberry.types.Info, tag: TagDeleteGQLModel) 
     return result
 
 @strawberry.mutation(description="""updates the tag""")
-async def tag_update(self, info: strawberry.types.Info, tag: TagUpdateGQLModel) -> TagResultGQLModel:
+async def preference_tag_update(self, info: strawberry.types.Info, tag: PreferenceTagUpdateGQLModel) -> PreferenceTagResultGQLModel:
     actingUser = getUser(info)
-    loader = getLoaders(info).tags
+    loader = getLoaders(info).preferedtags
     tag.updatedby = actingUser["id"]
 
-    result = TagResultGQLModel()
+    result = PreferenceTagResultGQLModel()
     result.id = tag.id
     row = await loader.update(tag)
     if row is None:
