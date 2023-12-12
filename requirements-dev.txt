@@ -8,7 +8,7 @@ asyncpg
 sqlalchemy
 sqlalchemy_utils
 
-pydantic==1.8.2
+pydantic
 strawberry-graphql
 click==8.1.3
 aiodataloader
