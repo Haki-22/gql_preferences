@@ -85,6 +85,10 @@ mutation PSTInsert {
 
 - links work
 
+11.12.
+
+docker image: https://hub.docker.com/repository/docker/haki22/gql-preferences/general
+
 ---
 
 ## Notes
@@ -113,23 +117,16 @@ tests
 
 Fronted loads into default and should search for user specific user settings if there are some -> apply them.
 
-#### Use the same entity resolution? (return whole enitty not just ID) 
+#### Use the same entity resolution? (return whole enitty not just ID)  (PreferenceTagEntityGQLModel)
 
 - Whole GQL model for EntityTypes? 
-
-(PreferenceTagEntityGQLModel)
  
 @strawberry.field(description="Retrieves the entity_type_id ") 
   def entity_type_id(self) -> UUID:
       return self.entity_type_id
 
-#### PreferenceEntityGQL
+- Check Mutations
 
-- Mutations
-
-- tags? How to search with more of them
-
-- preferenceEntitiesLabeled does it search for all?
 
 ## ?
 
