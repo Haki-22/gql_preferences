@@ -85,9 +85,39 @@ mutation PSTInsert {
 
 - links work
 
-11.12.
+### 11.12.
 
-docker [image:](https://hub.docker.com/repository/docker/haki22/gql-preferences/general)
+docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/general)
+
+
+### 6-7.1.24
+
+- unsuccessfully tried pytests
+
+  ```
+  FAILED tests/test_gt_definitions/test_PreferenceSettingsDBModel.py::test_reference_preference_settings - AssertionError: [GraphQLError("'all'", locations=[SourceLocation(line=1, column=23)], path=['_entities', 0])]  
+  ```
+
+  Might be because of bad data loader ("all") or bad written pytest
+
+- Moved and changed Dataloaders, DBFeeder to utils, copied gql_ug_proxy
+
+- changed:
+  ```
+  from. uuid import UUIDFKey, UUIDColumn
+  ```
+  to
+  ```
+  from .uuid import UUIDFKey, UUIDColumn
+  ```
+
+- can't resolve
+
+  ```
+  from uoishelpers.authenticationMiddleware import createAuthentizationSentinel
+  ```
+
+- Changed versions in requirements
 
 ---
 
@@ -114,6 +144,8 @@ Pretify code (Unify)
 Docker image
 
 tests
+
+rbacobject
 
 Fronted loads into default and should search for user specific user settings if there are some -> apply them.
 

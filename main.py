@@ -1,7 +1,7 @@
 import asyncio
 
 #from api.dbdefinitions import ComposeConnectionString, startEngine
-from gql_preferences.dbfeeder import initDB
+from gql_preferences.utils.DBFeeder import initDB
 from gql_preferences.DBDefinitions import ComposeConnectionString, startEngine
 
 connectionString = ComposeConnectionString()
@@ -41,7 +41,7 @@ async def RunOnceAndReturnSessionMaker():
 
 
 from strawberry.asgi import GraphQL
-from gql_preferences.dataloaders import createDataLoders
+from gql_preferences.utils.Dataloaders import createDataLoders
 
 class MyGraphQL(GraphQL):
     """Rozsirena trida zabezpecujici praci se session"""

@@ -4,7 +4,7 @@ from typing import Union, Optional, List, Annotated
 
 from .externals import UserGQLModel, GroupGQLModel, FacilityGQLModel, EventGQLModel
 from uuid import UUID, uuid4
-from ..dataloaders import getLoaders, getUser
+from ..utils.Dataloaders import  getLoaders, getUser
 from .BaseGQLModel import BaseGQLModel
 import sqlalchemy.sql
 

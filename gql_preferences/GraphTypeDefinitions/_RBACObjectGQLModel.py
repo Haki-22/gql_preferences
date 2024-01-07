@@ -2,9 +2,9 @@ import strawberry
 import uuid
 from .externals import resolve_reference
 
-from ..dataloaders import getLoaders
+from utils.Dataloaders import getLoaders
 
-#@strawberry.federation.type(extend=False, keys=["id"])
+@strawberry.federation.type(extend=False, keys=["id"])
 @strawberry.federation.type(keys=["id"])
 class RBACObjectGQLModel:
     id: uuid.UUID = strawberry.federation.field(external=True)

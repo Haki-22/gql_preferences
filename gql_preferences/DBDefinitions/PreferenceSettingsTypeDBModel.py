@@ -1,11 +1,11 @@
 import sqlalchemy
 from sqlalchemy import Column, String, DateTime, JSON, Uuid, Integer
-from sqlalchemy.ext.declarative import declarative_base
+#from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 from .Base import BaseModel
-from. uuid import UUIDFKey, UUIDColumn
-from uuid import UUID
+from .uuid import UUIDFKey, UUIDColumn
+#from uuid import UUID
 
 # Define a SQLAlchemy model for the 'preference_settings' table
 class PreferenceSettingsTypeModel(BaseModel):

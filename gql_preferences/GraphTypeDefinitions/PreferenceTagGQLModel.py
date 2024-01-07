@@ -3,7 +3,7 @@ from strawberry import lazy
 import datetime
 from typing import Union, Optional, List, TYPE_CHECKING, Annotated
 from uuid import UUID, uuid4
-from ..dataloaders import getLoaders, getUser
+from ..utils.Dataloaders import  getLoaders, getUser
 
 from .BaseGQLModel import BaseGQLModel
 

@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 from .Base import BaseModel
-from. uuid import UUIDFKey, UUIDColumn
+from .uuid import UUIDFKey, UUIDColumn
 
 # Define a SQLAlchemy model for the 'preference_settings' table
 class PreferenceSettingsModel(BaseModel):

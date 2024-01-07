@@ -4,7 +4,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 from .Base import BaseModel
-from. uuid import UUIDFKey, UUIDColumn
+from .uuid import UUIDFKey, UUIDColumn
 
 # Relationship table for user defined settings (value) in a preferencesettings type (language:english theme:dark)
 class PreferenceUserSettingsModel(BaseModel):

@@ -3,7 +3,7 @@ import datetime
 from typing import Union, Optional, List, Annotated
 
 from .externals import UserGQLModel, GroupGQLModel, FacilityGQLModel, EventGQLModel
-from ..dataloaders import getLoaders, getUser
+from ..utils.Dataloaders import  getLoaders, getUser
 from uuid import UUID
 
 from .BaseGQLModel import BaseGQLModel
