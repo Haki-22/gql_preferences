@@ -3,9 +3,6 @@ import uuid
 import datetime
 import typing
 
-
-UUIDType = uuid.UUID
-
 UserGQLModel = typing.Annotated["UserGQLModel", strawberry.lazy(".externals")]
 GroupGQLModel = typing.Annotated["GroupGQLModel", strawberry.lazy(".externals")]
 RBACObjectGQLModel = typing.Annotated["RBACObjectGQLModel", strawberry.lazy("._RBACObjectGQLModel")]
@@ -43,10 +40,10 @@ async def resolve_createdby(self) -> typing.Optional["UserGQLModel"]:
 async def resolve_changedby(self) -> typing.Optional["UserGQLModel"]:
     return await resolve_user(self.changedby)
 
-@strawberry.field(description="""Who made last change""")
+@strawberry.field(description="""Auth""")
 async def resolve_rbacobject(self) -> typing.Optional[RBACObjectGQLModel]:
     from ._RBACObjectGQLModel import RBACObjectGQLModel
-    result = None if self.rbacobject is None else await RBACObjectGQLModel.resolve_reference(self.rbacobject_id)
+    result = None if self.rbacobject is None else await RBACObjectGQLModel.resolve_reference(self.rbacobject)
     return result
 
 resolve_result_id: uuid.UUID = strawberry.field(description="primary key of CU operation object")
@@ -63,57 +60,200 @@ resolve_cu_result_id = strawberry.field(graphql_type=uuid.UUID, description="pri
 resolve_cu_result_msg = strawberry.field(graphql_type=str, description="""Should be `ok` if descired state has been reached, otherwise `fail`.
 For update operation fail should be also stated when bad lastchange has been entered.""")
 
+from inspect import signature
+import inspect 
+from functools import wraps
 
-def createAttributeScalarResolver(
-    scalarType: None = None, 
-    foreignKeyName: str = None,
-    description="Retrieves item by its id",
-    permission_classes=()
-    ):
+def asPage(field, *, extendedfilter=None):
+    def decorator(field):
+        print(field.__name__, field.__annotations__)
+        signatureField = signature(field)
+        return_annotation = signatureField.return_annotation
 
-    assert scalarType is not None
-    assert foreignKeyName is not None
+        skipParameter = signatureField.parameters.get("skip", None)
+        skipParameterDefault = 0
+        if skipParameter:
+            skipParameterDefault = skipParameter.default
 
-    @strawberry.field(description=description, permission_classes=permission_classes)
-    async def foreignkeyScalar(
-        self, info: strawberry.types.Info
-    ) -> typing.Optional[scalarType]:
-        # 👇 self must have an attribute, otherwise it is fail of definition
-        assert hasattr(self, foreignKeyName)
-        id = getattr(self, foreignKeyName, None)
+        limitParameter = signatureField.parameters.get("limit", None)
+        limitParameterDefault = 10
+        if limitParameter:
+            limitParameterDefault = limitParameter.default
+
+        whereParameter = signatureField.parameters.get("where", None)
+        whereParameterDefault = None
+        whereParameterAnnotation = str
+        if whereParameter:
+            whereParameterDefault = whereParameter.default
+            whereParameterAnnotation = whereParameter.annotation
+
+        async def foreignkeyVectorSimple(
+            self, info: strawberry.types.Info,
+            skip: typing.Optional[int] = skipParameterDefault,
+            limit: typing.Optional[int] = limitParameterDefault
+        ) -> signature(field).return_annotation:
+            loader = await field(self, info)
+            results = await loader.page(skip=skip, limit=limit, extendedfilter=extendedfilter)
+            return results
+        foreignkeyVectorSimple.__name__ = field.__name__
+        foreignkeyVectorSimple.__doc__ = field.__doc__
+
+        async def foreignkeyVectorComplex(
+            self, info: strawberry.types.Info, 
+            where: whereParameterAnnotation = None, 
+            #where: typing.Optional[whereParameterAnnotation] = whereParameterDefault, 
+            #where: typing.Optional[str] = None, 
+            orderby: typing.Optional[str] = None, 
+            desc: typing.Optional[bool] = None, 
+            skip: typing.Optional[int] = skipParameterDefault,
+            limit: typing.Optional[int] = limitParameterDefault
+        ) -> signatureField.return_annotation:
+            # logging.info(f"waiting for a loader {where}")
+            wf = None if where is None else strawberry.asdict(where)
+            loader = await field(self, info, where=wf)    
+            # logging.info(f"got a loader {loader}")
+            # wf = None if where is None else strawberry.asdict(where)
+            results = await loader.page(skip=skip, limit=limit, where=wf, orderby=orderby, desc=desc, extendedfilter=extendedfilter)
+            return results
+        foreignkeyVectorComplex.__name__ = field.__name__
+        foreignkeyVectorComplex.__doc__ = field.__doc__
         
-        result = None if id is None else await scalarType.resolve_reference(info=info, id=id)
-        return result
-    return foreignkeyScalar
+        if return_annotation._name == "List":
+            return foreignkeyVectorComplex if whereParameter else foreignkeyVectorSimple
+        else:
+            raise Exception("Unable to recognize decorated function, I am sorry")
 
-def createAttributeVectorResolver(
-    scalarType: None = None, 
-    whereFilterType: None = None,
-    foreignKeyName: str = None,
-    loaderLambda = lambda info: None, 
-    description="Retrieves items paged", 
-    skip: int=0, 
-    limit: int=10):
+    return decorator(field) if field else decorator
 
-    assert scalarType is not None
-    assert foreignKeyName is not None
+def asForeignList(*, foreignKeyName: str):
+    assert foreignKeyName is not None, "foreignKeyName must be defined"
+    def decorator(field):
+        print(field.__name__, field.__annotations__)
+        signatureField = signature(field)
+        return_annotation = signatureField.return_annotation
 
-    @strawberry.field(description=description)
-    async def foreignkeyVector(
-        self, info: strawberry.types.Info,
-        skip: int = skip,
-        limit: int = limit,
-        where: typing.Optional[whereFilterType] = None
-    ) -> typing.List[scalarType]:
-        
-        params = {foreignKeyName: self.id}
-        loader = loaderLambda(info)
-        assert loader is not None
-        
-        wf = None if where is None else strawberry.asdict(where)
-        result = await loader.page(skip=skip, limit=limit, where=wf, extendedfilter=params)
-        return result
-    return foreignkeyVector
+        skipParameter = signatureField.parameters.get("skip", None)
+        skipParameterDefault = skipParameter.default if skipParameter else 0
+
+        limitParameter = signatureField.parameters.get("limit", None)
+        limitParameterDefault = limitParameter.default if limitParameter else 10
+
+        whereParameter = signatureField.parameters.get("where", None)
+        whereParameterDefault = whereParameter.default if whereParameter else None
+        whereParameterAnnotation = whereParameter.annotation if whereParameter else str
+
+        async def foreignkeyVectorSimple(
+            self, info: strawberry.types.Info,
+            skip: typing.Optional[int] = skipParameterDefault,
+            limit: typing.Optional[int] = limitParameterDefault
+        ) -> signature(field).return_annotation:
+            extendedfilter = {}
+            extendedfilter[foreignKeyName] = self.id
+            loader = field(self, info)
+            if inspect.isawaitable(loader):
+                loader = await loader
+            results = await loader.page(skip=skip, limit=limit, extendedfilter=extendedfilter)
+            return results
+        foreignkeyVectorSimple.__name__ = field.__name__
+        foreignkeyVectorSimple.__doc__ = field.__doc__
+        foreignkeyVectorSimple.__module__ = field.__module__
+
+        async def foreignkeyVectorComplex(
+            self, info: strawberry.types.Info, 
+            where: whereParameterAnnotation = whereParameterDefault, 
+            orderby: typing.Optional[str] = None, 
+            desc: typing.Optional[bool] = None, 
+            skip: typing.Optional[int] = skipParameterDefault,
+            limit: typing.Optional[int] = limitParameterDefault
+        ) -> signatureField.return_annotation:
+            extendedfilter = {}
+            extendedfilter[foreignKeyName] = self.id
+            loader = field(self, info)
+            if inspect.isawaitable(loader):
+                loader = await loader
+            
+            wf = None if where is None else strawberry.asdict(where)
+            results = await loader.page(skip=skip, limit=limit, where=wf, orderby=orderby, desc=desc, extendedfilter=extendedfilter)
+            return results
+        foreignkeyVectorComplex.__name__ = field.__name__
+        foreignkeyVectorComplex.__doc__ = field.__doc__
+        foreignkeyVectorComplex.__module__ = field.__module__
+
+        async def foreignkeyVectorComplex2(
+            self, info: strawberry.types.Info, 
+            where: whereParameterAnnotation = whereParameterDefault, 
+            orderby: typing.Optional[str] = None, 
+            desc: typing.Optional[bool] = None, 
+            skip: typing.Optional[int] = skipParameterDefault,
+            limit: typing.Optional[int] = limitParameterDefault
+        ) -> signatureField.return_annotation: #typing.List[str]:
+            extendedfilter = {}
+            extendedfilter[foreignKeyName] = self.id
+            loader = field(self, info)
+            
+            wf = None if where is None else strawberry.asdict(where)
+            results = await loader.page(skip=skip, limit=limit, where=wf, orderby=orderby, desc=desc, extendedfilter=extendedfilter)
+            return results
+        foreignkeyVectorComplex2.__module__ = field.__module__
+        if return_annotation._name == "List":
+            return foreignkeyVectorComplex if whereParameter else foreignkeyVectorSimple
+        else:
+            raise Exception("Unable to recognize decorated function, I am sorry")
+
+    return decorator
+
+#def createAttributeScalarResolver(
+#    scalarType: None = None, 
+#    foreignKeyName: str = None,
+#    description="Retrieves item by its id",
+#    permission_classes=()
+#    ):
+#
+#    assert scalarType is not None
+#    assert foreignKeyName is not None
+#
+#    @strawberry.field(description=description, permission_classes=permission_classes)
+#    async def foreignkeyScalar(
+#        self, info: strawberry.types.Info
+#    ) -> typing.Optional[scalarType]:
+#        # 👇 self must have an attribute, otherwise it is fail of definition
+#        assert hasattr(self, foreignKeyName)
+#        id = getattr(self, foreignKeyName, None)
+#        
+#        result = None if id is None else await scalarType.resolve_reference(info=info, id=id)
+#        return result
+#    return foreignkeyScalar
+#
+#def createAttributeVectorResolver(
+#    scalarType: None = None, 
+#    whereFilterType: None = None,
+#    foreignKeyName: str = None,
+#    loaderLambda = lambda info: None, 
+#    description="Retrieves items paged", 
+#    skip: int=0, 
+#    limit: int=10):
+#
+#    assert scalarType is not None
+#    assert foreignKeyName is not None
+#
+#    @strawberry.field(description=description)
+#    async def foreignkeyVector(
+#        self, info: strawberry.types.Info,
+#        skip: int = skip,
+#        limit: int = limit,
+#        where: typing.Optional[whereFilterType] = None
+#    ) -> typing.List[scalarType]:
+#        
+#        params = {foreignKeyName: self.id}
+#        loader = loaderLambda(info)
+#        assert loader is not None
+#        
+#        wf = None if where is None else strawberry.asdict(where)
+#        result = await loader.page(skip=skip, limit=limit, where=wf, extendedfilter=params)
+#        return result
+#    return foreignkeyVector
+
+
 
 def createRootResolver_by_id(scalarType: None, description="Retrieves item by its id"):
     assert scalarType is not None
@@ -131,7 +271,9 @@ def createRootResolver_by_page(
     loaderLambda = lambda info: None, 
     description="Retrieves items paged", 
     skip: int=0, 
-    limit: int=10):
+    limit: int=10,
+    order_by: typing.Optional[str] = None,
+    desc: typing.Optional[bool] = None):
 
     assert scalarType is not None
     assert whereFilterType is not None
@@ -144,6 +286,6 @@ def createRootResolver_by_page(
         loader = loaderLambda(info)
         assert loader is not None
         wf = None if where is None else strawberry.asdict(where)
-        result = await loader.page(skip=skip, limit=limit, where=wf)
+        result = await loader.page(skip=skip, limit=limit, where=wf, orderby=order_by, desc=desc)
         return result
     return paged

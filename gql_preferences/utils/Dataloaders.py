@@ -4,7 +4,6 @@ import logging
 from gql_preferences.DBDefinitions import (
     PreferenceTagModel, 
     PreferenceTagEntityModel,
-
     PreferenceSettingsTypeModel,
     PreferenceSettingsModel,
     PreferenceUserSettingsModel

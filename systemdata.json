@@ -1818,6 +1818,13 @@
             "entity_id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120003",
             "entity_type_id": "e8479a21-b7c4-4140-9562-217de2656d55",
             "tag_id": "7a4c0d3e-2e3a-4ea0-9037-baa38d8400d2"
+        },
+        {
+            "id": "2f22d834-5d75-4746-86f8-09f2989dc6a7",
+            "author_id": "f8089aa6-2c4a-4746-9503-105fcc5d054c",
+            "entity_id": "89d1f430-ae0f-11ed-9bd8-0242ac110002",
+            "entity_type_id": "e8479a21-b7c4-4140-9562-217de2656d55",
+            "tag_id": "8148fd61-20b3-45d1-a382-ca3aadafb9a1"
         }
     ],
     "preferedtags": [

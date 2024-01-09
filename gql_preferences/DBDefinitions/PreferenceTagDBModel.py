@@ -31,3 +31,5 @@ class PreferenceTagModel(BaseModel):
 
     # Foreign key relationship to the user who last changed the tag
     changedby = UUIDFKey( comment="Foreign key to the user who last changed the tag")
+
+    rbacobject = UUIDFKey(nullable=True, comment="user or group id, determines access")

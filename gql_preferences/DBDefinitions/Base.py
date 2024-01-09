@@ -1,9 +1,10 @@
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import Column, String
 from typing import Optional
+import sqlalchemy
 
-DeclarativeBase = declarative_base()
-BaseModel = DeclarativeBase
+class BaseModel(DeclarativeBase):
+    pass
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -20,8 +21,13 @@ async def startEngine(connectionstring, makeDrop=True, makeUp=True):
             await conn.run_sync(BaseModel.metadata.drop_all)
             print('BaseModel.metadata.drop_all finished')
         if makeUp:
-            await conn.run_sync(BaseModel.metadata.create_all)    
-            print('BaseModel.metadata.create_all finished')
+            try:
+                await conn.run_sync(BaseModel.metadata.create_all)
+                print("BaseModel.metadata.create_all finished")
+            except sqlalchemy.exc.NoReferencedTableError as e:
+                print(e)
+                print("Unable automaticaly create tables")
+                return None
 
     async_sessionMaker = sessionmaker(
         asyncEngine, expire_on_commit=False, class_=AsyncSession

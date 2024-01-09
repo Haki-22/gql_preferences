@@ -38,6 +38,8 @@ class PreferenceSettingsModel(BaseModel):
     #order in parent entity (Preference Settings Type)
     order = Column(Integer, comment="order in parent entity")
 
+    rbacobject = UUIDFKey(nullable=True, comment="user or group id, determines access")
+
     #default_settings = Column(Boolean,comment="is it default preference settings? True=Default", default=False)
 
     #userids = Column(ARRAY(Uuid), comment="Array of user IDs with this preference setting")

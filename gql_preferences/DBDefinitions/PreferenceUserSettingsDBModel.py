@@ -25,17 +25,13 @@ class PreferenceUserSettingsModel(BaseModel):
     # Foreign key relationship to the user who changed the type of preferences
     changedby = UUIDFKey(comment="Foreign key to the user who has changed this preference settings")
 
-    """ #Foreign key to the preference settings type
-    preference_settings_type_id =  Column(ForeignKey("preference_settings_types.id"), index=True, comment="Preference Settings type of this setting (parent type)")
-
-    #Foreign key to the preference settings 
-    preference_settings_id = Column(ForeignKey("preference_settings.id"), index=True, comment="children Preference Settings of parent type") """
-
     #Foreign key to the preference settings type
     preference_settings_type_id =  UUIDFKey(comment="Foreign key to the preference settings Type")
 
     #Foreign key to the preference settings 
     preference_settings_id = UUIDFKey(comment="Foreign key to the preference settings")
+
+    rbacobject = UUIDFKey(nullable=True, comment="user or group id, determines access")
     
     #order (Preference Settings Type)
     #order = Column(Integer, comment="order")
@@ -43,8 +39,14 @@ class PreferenceUserSettingsModel(BaseModel):
     #user_default_settings = Column(Boolean,comment="Does this user have default settings? True=Defdault", default=True)
 
     """ 
-     #Relationship to preference settings type
+    #Relationship to preference settings type
     type = relationship("PreferenceSettingsTypeModel", back_populates="user_settings", uselist=False)
 
     #Relationship to preference settings 
     preference_settings = relationship("PreferenceSettingsModel", back_populates="user_settings", uselist=False) """
+
+    """ #Foreign key to the preference settings type
+    preference_settings_type_id =  Column(ForeignKey("preference_settings_types.id"), index=True, comment="Preference Settings type of this setting (parent type)")
+
+    #Foreign key to the preference settings 
+    preference_settings_id = Column(ForeignKey("preference_settings.id"), index=True, comment="children Preference Settings of parent type") """

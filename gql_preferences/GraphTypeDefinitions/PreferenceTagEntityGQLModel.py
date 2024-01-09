@@ -3,7 +3,10 @@ import datetime
 from typing import Union, Optional, List, Annotated
 
 from .externals import UserGQLModel, GroupGQLModel, FacilityGQLModel, EventGQLModel
+
 from ..utils.Dataloaders import  getLoaders, getUser
+from ._GraphPermissions import OnlyForAuthentized
+
 from uuid import UUID
 
 from .BaseGQLModel import BaseGQLModel
@@ -30,11 +33,11 @@ class PreferenceEntityIdGQLModel:
         return self["name"]
 
 # Dictionary mapping entity type IDs to corresponding classes
-entity_type_ids = {
-    UUID("e8479a21-b7c4-4140-9562-217de2656d55"): UserGQLModel,
-    UUID("2d3d9801-0017-4cf2-9272-2df7b59da667"): GroupGQLModel,
-    UUID("a7457888-ed8a-4720-b116-13558cd7963b"): EventGQLModel,
-    UUID("9feb8037-6c62-45bb-ac20-916763731f5d"): FacilityGQLModel
+entity_type_ids = {                                                 #Identify all
+    UUID("e8479a21-b7c4-4140-9562-217de2656d55"): UserGQLModel,     #users
+    UUID("2d3d9801-0017-4cf2-9272-2df7b59da667"): GroupGQLModel,    #Groups
+    UUID("a7457888-ed8a-4720-b116-13558cd7963b"): EventGQLModel,    #Events
+    UUID("9feb8037-6c62-45bb-ac20-916763731f5d"): FacilityGQLModel  #Facilities
 }
 
 
@@ -58,6 +61,7 @@ class PreferenceTagEntityGQLModel(BaseGQLModel):
     lastchange = resolve_lastchange
     created = resolve_created
     createdby = resolve_createdby
+    rbacobject = resolve_rbacobject
 
     """ @strawberry.field(description="Time stamp")
     async def lastchange(self, info: strawberry.types.Info) -> datetime.datetime:
@@ -224,6 +228,7 @@ async def preference_entities_labeled(info: strawberry.types.Info, tags: List[UU
 @strawberry.input(description="""allows to create link between an GQL entity, tag and user who defined it""")
 class PreferenceEntityAddTagGQLModel:
     entity_id: UUID = strawberry.field(default=None, description="GQL entity primary key value, aka GQL entity identification")
+    rbacobject: strawberry.Private[UUID] = None 
     entity_type_id: UUID = strawberry.field(default=None, description="GQL entity type, aka UserGQLModel id")
     tag_id: UUID = strawberry.field(default=None, description="tag identification")
     createdby: strawberry.Private[UUID] = None
@@ -246,7 +251,7 @@ class PreferenceEntityTagResultGQLModel:
         return result
 
 # GraphQL mutation to add a tag to an entity
-@strawberry.mutation(description="""Marks an entity with a tag""")
+@strawberry.mutation(description="""Marks an entity with a tag""", permission_classes=[OnlyForAuthentized()])
 async def preference_tag_add_to_entity(self, info: strawberry.types.Info, tag_data: PreferenceEntityAddTagGQLModel) -> PreferenceEntityTagResultGQLModel:
     #assert tag_data.entity_type_id in entity_type_ids, "unknown entity type"
     actingUser = getUser(info)
@@ -264,7 +269,7 @@ async def preference_tag_add_to_entity(self, info: strawberry.types.Info, tag_da
     return result
 
 # GraphQL mutation to remove a tag from an entity
-@strawberry.mutation(description="""Removes a tag from entity""")
+@strawberry.mutation(description="""Removes a tag from entity""", permission_classes=[OnlyForAuthentized()])
 async def preference_tag_remove_from_entity(self, info: strawberry.types.Info, tag_data: PreferenceEntityRemoveTagGQLModel) -> PreferenceEntityTagResultGQLModel:
     
     actingUser = getUser(info)

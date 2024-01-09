@@ -4,7 +4,10 @@ from typing import Union, Optional, List, Annotated
 
 from .externals import UserGQLModel, GroupGQLModel, FacilityGQLModel, EventGQLModel
 from uuid import UUID, uuid4
+
 from ..utils.Dataloaders import  getLoaders, getUser
+from ._GraphPermissions import OnlyForAuthentized
+
 from .BaseGQLModel import BaseGQLModel
 import sqlalchemy.sql
 
@@ -41,6 +44,7 @@ class PreferenceUserSettingsGQLModel(BaseGQLModel):
     lastchange = resolve_lastchange
     created = resolve_created
     createdby = resolve_createdby
+    rbacobject = resolve_rbacobject
 
     
     @strawberry.field(description="Retrieves the type of settings")
@@ -164,7 +168,7 @@ class PreferenceUserSettingsInsertGQLModel:
     preference_settings_type_id: UUID = strawberry.field(description="id of type")
     preference_settings_id: UUID = strawberry.field(description="id of settings")
     user_id:  Optional[UUID] = strawberry.field(description="id of user, if not given gets the acting user", default=None)
-
+    rbacobject: strawberry.Private[UUID] = None 
     #createdby: strawberry.Private[UUID] = None 
 
 #################
@@ -208,7 +212,7 @@ For update operation fail should be also stated when bad lastchange has been ent
 #Create new User settings
 @strawberry.mutation(description="""Inserts a new user setting, 
                      if User already has settings in this type, operation will fail
-                     if no ID is given, generates a new one""")
+                     if no ID is given, generates a new one""", permission_classes=[OnlyForAuthentized()])
 async def preference_user_settings_type_insert(self, info: strawberry.types.Info, user_settings: PreferenceUserSettingsInsertGQLModel) -> PreferenceUserSettingsResultGQLModel:
     
     if user_settings.id is None:
@@ -231,7 +235,7 @@ async def preference_user_settings_type_insert(self, info: strawberry.types.Info
 
 # Update already existing User settings
 @strawberry.mutation(description="""Updates already existing settings type
-                     requires ID and lastchange""")
+                     requires ID and lastchange""", permission_classes=[OnlyForAuthentized()])
 async def preference_user_settings_type_update(self, info: strawberry.types.Info, user_settings: PreferenceUserSettingsUpdateGQLModel) -> PreferenceUserSettingsResultGQLModel:
     actingUser = getUser(info)
     loader = getLoaders(info).user_settings
@@ -245,7 +249,7 @@ async def preference_user_settings_type_update(self, info: strawberry.types.Info
 
 # Delete existing User settings
 @strawberry.mutation(description="""Deletes already existing preference settings 
-                     rrequires ID and lastchange""")
+                     rrequires ID and lastchange""", permission_classes=[OnlyForAuthentized()])
 async def preference_user_settings_delete(self, info: strawberry.types.Info, preference_settings: PreferenceUserSettingsDeleteGQLModel) -> PreferenceUserSettingsResultGQLModel:
     loader = getLoaders(info).user_settings
 

@@ -4,7 +4,10 @@ from typing import Union, Optional, List, Annotated
 
 from .externals import UserGQLModel, GroupGQLModel, FacilityGQLModel, EventGQLModel
 from uuid import UUID
+
 from ..utils.Dataloaders import  getLoaders, getUser
+from ._GraphPermissions import OnlyForAuthentized, RoleBasedPermission
+
 from .BaseGQLModel import BaseGQLModel
 
 from ._GraphResolvers import(
@@ -43,6 +46,7 @@ class PreferenceSettingsTypeGQLModel(BaseGQLModel):
         return self.name """
     
     name = resolve_name
+    rbacobject = resolve_rbacobject
     
     @strawberry.field(description="name of the type preference in english")
     async def name_en(self, info: strawberry.types.Info) -> str:
@@ -103,7 +107,7 @@ PreferenceSettingsWhereFilter = Annotated["PreferenceSettingsWhereFilter", straw
 @createInputs
 @dataclass
 class PreferenceSettingsTypeWhereFilter:
-    name: Optional[str]
+    name: str
     name_en: str
     id: UUID
 
@@ -111,7 +115,8 @@ class PreferenceSettingsTypeWhereFilter:
 
 # Define the function without the decorator
 async def preference_settings_type_page_function(self, info: strawberry.types.Info, skip: int = 0, limit: int = 10,
-                                       where: Optional[PreferenceSettingsTypeWhereFilter] = None) -> List[PreferenceSettingsTypeGQLModel]:
+    where: Optional[PreferenceSettingsTypeWhereFilter] = None) -> List[PreferenceSettingsTypeGQLModel]:
+
     loader = getLoaders(info).preference_settings_types
     wf = None if where is None else strawberry.asdict(where)
     return await loader.page(skip, limit, where=wf)
@@ -164,6 +169,7 @@ preference_settings_default_by_type_id = strawberry.field(description="Returns d
 @strawberry.input(description="Creates a new preference settings type")
 class PreferenceSettingsTypeInsertGQLModel:
     id: Optional[uuid.UUID] = strawberry.field(description="primary key (UUID), could be client generated", default=None)
+    rbacobject: strawberry.Private[uuid.UUID] = None 
 
     name: str = strawberry.field(description="Preference settings type name")
     name_en: Optional[str] = strawberry.field(description="Preference settings type name in english", default="")
@@ -216,7 +222,7 @@ For update operation fail should be also stated when bad lastchange has been ent
 #Create new PreferenceSettingsType
 @strawberry.mutation(description="""Inserts a new preference settings type, 
                      If name already exists, operation will fail,
-                     if no ID is given, generates a new one""")
+                     if no ID is given, generates a new one""", permission_classes=[OnlyForAuthentized()])
 async def preference_settings_type_insert(self, info: strawberry.types.Info, preference_settings_type: PreferenceSettingsTypeInsertGQLModel) -> PreferenceSettingsTypeResultGQLModel:
     
     if preference_settings_type.id is None:
@@ -237,7 +243,7 @@ async def preference_settings_type_insert(self, info: strawberry.types.Info, pre
 
 # Update already existing PreferenceSettingsType
 @strawberry.mutation(description="""Updates already existing settings type
-                     requires ID and lastchange""")
+                     requires ID and lastchange""", permission_classes=[OnlyForAuthentized()])
 async def preference_settings_type_update(self, info: strawberry.types.Info, preference_settings_type: PreferenceSettingsTypeUpdateGQLModel) -> PreferenceSettingsTypeResultGQLModel:
     actingUser = getUser(info)
     loader = getLoaders(info).preference_settings_types
@@ -251,7 +257,7 @@ async def preference_settings_type_update(self, info: strawberry.types.Info, pre
 
 # Delete existing PreferenceSettingsType
 @strawberry.mutation(description="""Deletes already existing settings type
-                     requires ID and lastchange""")
+                     requires ID and lastchange""", permission_classes=[OnlyForAuthentized()])
 async def preference_settings_type_delete(self, info: strawberry.types.Info, preference_settings_type: PreferenceSettingsTypeDeleteGQLModel) -> PreferenceSettingsTypeResultGQLModel:
     loader = getLoaders(info).preference_settings_types
 

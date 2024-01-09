@@ -35,6 +35,8 @@ class PreferenceSettingsTypeModel(BaseModel):
 
     default_preference_settings_id = UUIDFKey(comment="Default preference settings ID")
 
+    rbacobject = UUIDFKey(nullable=True, comment="user or group id, determines access")
+
     #order (Preference Settings Type)
     order = Column(Integer, comment="order")
 

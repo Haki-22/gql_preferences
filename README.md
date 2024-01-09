@@ -119,6 +119,14 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
 
 - Changed versions in requirements
 
+### 9.1.
+
+- Added RBACObject to mutations (CRUD)   
+  ```
+  rbacobject: strawberry.Private[UUID] = None 
+  ```
+
+
 ---
 
 ## Notes
@@ -145,7 +153,7 @@ Docker image
 
 tests
 
-rbacobject
+- rbacobject to what queries?
 
 Fronted loads into default and should search for user specific user settings if there are some -> apply them.
 
@@ -159,6 +167,19 @@ Fronted loads into default and should search for user specific user settings if 
 
 - Check Mutations
 
+- Map all groups, events, users, facilities to existing data? (GraphTypeDefinitions/PreferenceTagEntityGQLModel)
+
+```
+# Dictionary mapping entity type IDs to corresponding classes
+entity_type_ids = {                                                 #Identify all
+    UUID("e8479a21-b7c4-4140-9562-217de2656d55"): UserGQLModel,     #users
+    UUID("2d3d9801-0017-4cf2-9272-2df7b59da667"): GroupGQLModel,    #Groups
+    UUID("a7457888-ed8a-4720-b116-13558cd7963b"): EventGQLModel,    #Events
+    UUID("9feb8037-6c62-45bb-ac20-916763731f5d"): FacilityGQLModel  #Facilities
+}
+```
+
+- Change where filter to ingore UPPER / lower case
 
 ## ?
 

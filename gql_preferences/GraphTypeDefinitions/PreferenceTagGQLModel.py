@@ -3,7 +3,9 @@ from strawberry import lazy
 import datetime
 from typing import Union, Optional, List, TYPE_CHECKING, Annotated
 from uuid import UUID, uuid4
+
 from ..utils.Dataloaders import  getLoaders, getUser
+from ._GraphPermissions import OnlyForAuthentized
 
 from .BaseGQLModel import BaseGQLModel
 
@@ -37,6 +39,7 @@ class PreferenceTagGQLModel(BaseGQLModel):
     createdby = resolve_createdby
     name_en = resolve_name_en
     name = resolve_name
+    rbacobject = resolve_rbacobject
     
 
     @strawberry.field(description="""entities marked with this tag""")
@@ -95,6 +98,7 @@ class PreferenceTagInsertGQLModel:
     id: Optional[UUID] = strawberry.field(default=None, description="optional primary key value of tag, UUID expected")
     createdby: strawberry.Private[UUID] = None #strawberry.field(default=None, description="user who created this db record")
     author_id: strawberry.Private[UUID] = None #strawberry.field(default=None, description="user who owns this tag")
+    rbacobject: strawberry.Private[UUID] = None 
 
 @strawberry.input(description="""Updates the tag""")
 class PreferenceTagUpdateGQLModel:
@@ -108,6 +112,9 @@ class PreferenceTagDeleteGQLModel:
     name: str = strawberry.field(default=None, description="tag name, could be used as an identification")
     id: Optional[UUID] = strawberry.field(default=None, description="primary key, aka tag identification")
 
+
+#####################################################################
+#                   RESULT
 @strawberry.type(description="""result of tag operation""")
 class PreferenceTagResultGQLModel:
     id: Union[UUID, None] = strawberry.field(default=None, description="id of tag")
@@ -117,8 +124,11 @@ class PreferenceTagResultGQLModel:
     async def tag(self, info: strawberry.types.Info) -> Union[PreferenceTagGQLModel, None]:
         result = await PreferenceTagGQLModel.resolve_reference(info, self.id)
         return result
+#
+#####################################################################
 
-@strawberry.mutation(description="inserts a new tag, if the name is already defined, operation will fail")
+
+@strawberry.mutation(description="inserts a new tag, if the name is already defined, operation will fail", permission_classes=[OnlyForAuthentized()])
 async def preference_tag_insert(self, info: strawberry.types.Info, tag: PreferenceTagInsertGQLModel) -> PreferenceTagResultGQLModel:
     if tag.id is None:
         tag.id = uuid4()
@@ -139,7 +149,7 @@ async def preference_tag_insert(self, info: strawberry.types.Info, tag: Preferen
         result.msg = "fail"
     return result
 
-@strawberry.mutation(description="""deletes the tag""")
+@strawberry.mutation(description="""deletes the tag""", permission_classes=[OnlyForAuthentized()])
 async def preference_tag_delete(self, info: strawberry.types.Info, tag: PreferenceTagDeleteGQLModel) -> PreferenceTagResultGQLModel:
     actingUser = getUser(info)
     loader = getLoaders(info).preferedtags
@@ -162,7 +172,7 @@ async def preference_tag_delete(self, info: strawberry.types.Info, tag: Preferen
         
     return result
 
-@strawberry.mutation(description="""updates the tag""")
+@strawberry.mutation(description="""updates the tag""", permission_classes=[OnlyForAuthentized()])
 async def preference_tag_update(self, info: strawberry.types.Info, tag: PreferenceTagUpdateGQLModel) -> PreferenceTagResultGQLModel:
     actingUser = getUser(info)
     loader = getLoaders(info).preferedtags
