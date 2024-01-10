@@ -1,5 +1,5 @@
 import sqlalchemy
-from sqlalchemy import Column, String, DateTime, JSON, Uuid, ForeignKey, Integer, Boolean
+from sqlalchemy import Column, String, DateTime, JSON, ForeignKey, Integer, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 

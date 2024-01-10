@@ -1,6 +1,5 @@
 import sqlalchemy
 from sqlalchemy import Column, String, DateTime, ForeignKey
-from uoishelpers.uuid import UUIDColumn
 from .Base import BaseModel
 from .uuid import UUIDFKey, UUIDColumn
 

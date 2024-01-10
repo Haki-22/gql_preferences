@@ -324,7 +324,7 @@ class AuthorizationLoader(DataLoader):
 
 
 
-""" 
+
 class Loaders:
     authorizations = None
     preferedtags = None
@@ -369,10 +369,10 @@ def createLoaders(asyncSessionMaker, models=dbmodels) -> Loaders:
             return createIdLoader(asyncSessionMaker, PreferenceUserSettingsModel)
       
     return Loaders()
- """
 
 
-########### !!!!!!!!!!!! ###################
+
+""" ########### !!!!!!!!!!!! ###################
 async def createLoaders(asyncSessionMaker, models=dbmodels):
     def createLambda(loaderName, DBModel):
         return lambda self: createIdLoader(asyncSessionMaker, DBModel)
@@ -381,25 +381,28 @@ async def createLoaders(asyncSessionMaker, models=dbmodels):
     for key, DBModel in models.items():
         attrs[key] = property(cache(createLambda(key, DBModel)))
     
-    Loaders = type('Loaders', (), attrs)   
+    Loaders = type('loaders', (), attrs)   
     return Loaders()
 
+ """
+##getLoadersFromInfo
 
-# Function to get loaders from the GraphQL context
+""" # Function to get loaders from the GraphQL context
 def getLoaders(info):
     return info.context["all"]
-
+ """
 #??????
-def getLoadersFromInfo(info):
+def getLoaders(info):
     context = info.context
     loaders = context["loaders"]
     return loaders
 
-""" def getLoaders(info) -> Loaders:
+""" def getLoaders(info): #-> Loaders
     context = info.context
+    print("Context keys:", context.keys())
     loaders = context["loaders"]
-    return loaders """
-
+    return loaders
+ """
 # Function to get the user from the GraphQL context
 def getUser(info):
     return info.context["user"]

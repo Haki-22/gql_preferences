@@ -127,6 +127,20 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
   ```
 
 
+### 10.1.
+
+- changed whole main.py to newer version from hrbolek/gql/forms
+
+- Changed DataLoaders to be predefined one by one instead of lambda function
+
+- Started pytesting 
+  
+  ```
+  pytest --cov-report term-missing --cov=gql_preferences.DBDefinitions --cov=gql_preferences.GraphTypeDefinitions --cov=gql_preferences.utils  --log-cli-level=INFO -x
+  ```
+
+- Changed systamdata.json, preferencesettings and tags to follow new default user (John Newbie, 2d9dc5ca-a4a2-11ed-b9df-0242ac120003)
+
 ---
 
 ## Notes

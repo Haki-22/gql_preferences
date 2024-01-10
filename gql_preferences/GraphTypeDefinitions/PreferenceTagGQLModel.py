@@ -77,11 +77,11 @@ async def preference_tags(self, info: strawberry.types.Info) -> List["Preference
     return await loader.filter_by(author_id=actingUser["id"])
 
 # New query field for searching by ID
-@strawberry.field(description="""Returns a tag by ID""")
+@strawberry.field(description="Returns a tag by ID")
 async def preference_tag_by_id(info: strawberry.types.Info, id: UUID) -> Optional[PreferenceTagGQLModel]:
-    if id is not UUID: # doesnt work :C
-        return None
-    return await PreferenceTagGQLModel.resolve_reference(info, id)
+    """ if id is not UUID: # doesnt work :C
+        return None """
+    return await PreferenceTagGQLModel.resolve_reference(info=info, id=id)
 
 
 #####################################################################
