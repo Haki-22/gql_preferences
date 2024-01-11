@@ -114,35 +114,35 @@ async def preference_settings_page(self, info: strawberry.types.Info, skip: int 
 async def preference_settings_by_id(self, info: strawberry.types.Info, id: UUID) -> Optional[PreferenceSettingsGQLModel]:
     return await PreferenceSettingsGQLModel.resolve_reference(info=info, id=id)
 
-""" # Query default settings 
-@strawberry.field(description="Returns default preference settings page")
-async def preference_settings_default_page(self, info: strawberry.types.Info, skip: int = 0, limit: int = 20) -> List[PreferenceSettingsGQLModel]:
-    loader = getLoaders(info).preference_settings
-    result = await loader.filter_by(default_settings=True)
-    return result """
-
-""" # Query for searching default preference settings for a type
-@strawberry.field(description="Returns default preference settings for a type")
-async def preference_settings_default_by_type_id(self, info: strawberry.types.Info, type_id: UUID) -> List[PreferenceSettingsGQLModel]:
-    loader = getLoaders(info).preference_settings
-    result = await loader.filter_by(preference_settings_type_id=type_id, default_settings=True)
-    return result
- """
-
-####### filter by nejde pouzit s ARRAY, porovnana ID=ID
-""" # Query for a page of a user settings
-@strawberry.field(description="Returns preference settings page for a user")
-async def user_settings_page(self, info: strawberry.types.Info, skip: int = 0, limit: int = 20) -> List[PreferenceSettingsGQLModel]:
-    loader = getLoaders(info).preference_settings
-    actingUser = getUser(info)
-    actingUserId = actingUser["id"]
-    print(actingUserId, "user_id")
-    #result = await loader.filter_by(userids=actingUserId)
-    #print(self.userids, "userids")
-    
-    result = await loader.filter_by(userids=actingUserId)
-    return result
- """
+#""" # Query default settings 
+#@strawberry.field(description="Returns default preference settings page")
+#async def preference_settings_default_page(self, info: strawberry.types.Info, skip: int = 0, limit: int = 20) -> List[PreferenceSettingsGQLModel]:
+#    loader = getLoaders(info).preference_settings
+#    result = await loader.filter_by(default_settings=True)
+#    return result """
+#
+#""" # Query for searching default preference settings for a type
+#@strawberry.field(description="Returns default preference settings for a type")
+#async def preference_settings_default_by_type_id(self, info: strawberry.types.Info, type_id: UUID) -> List[PreferenceSettingsGQLModel]:
+#    loader = getLoaders(info).preference_settings
+#    result = await loader.filter_by(preference_settings_type_id=type_id, default_settings=True)
+#    return result
+# """
+#
+######## filter by nejde pouzit s ARRAY, porovnana ID=ID
+#""" # Query for a page of a user settings
+#@strawberry.field(description="Returns preference settings page for a user")
+#async def user_settings_page(self, info: strawberry.types.Info, skip: int = 0, limit: int = 20) -> List[PreferenceSettingsGQLModel]:
+#    loader = getLoaders(info).preference_settings
+#    actingUser = getUser(info)
+#    actingUserId = actingUser["id"]
+#    print(actingUserId, "user_id")
+#    #result = await loader.filter_by(userids=actingUserId)
+#    #print(self.userids, "userids")
+#    
+#    result = await loader.filter_by(userids=actingUserId)
+#    return result
+# """
 
 
 #####################################################################
@@ -195,23 +195,23 @@ For update operation fail should be also stated when bad lastchange has been ent
 
 
 
-""" async def update_parent(info:strawberry.types.Info, parentID: UUID):
-    
-    print(parentID, "moment")
-    preference_settings_type_loader = getLoaders(info).preference_settings_types
-    rows = await preference_settings_type_loader.filter_by(id=parentID)
-    row = next(rows, None)
-    if row:
-        print(row.id, "moment")
-        return await preference_settings_type_loader.update
-    else:
-        print(f"No row found for ID: {parentID}")
-        return None
+#""" async def update_parent(info:strawberry.types.Info, parentID: UUID):
+#    
+#    print(parentID, "moment")
+#    preference_settings_type_loader = getLoaders(info).preference_settings_types
+#    rows = await preference_settings_type_loader.filter_by(id=parentID)
+#    row = next(rows, None)
+#    if row:
+#        print(row.id, "moment")
+#        return await preference_settings_type_loader.update
+#    else:
+#        print(f"No row found for ID: {parentID}")
+#        return None
+#
+# """
 
- """
-
-#Create new PreferenceSettingsType
-@strawberry.mutation(description="""Inserts a new preference settings type, 
+#Create new PreferenceSettings
+@strawberry.mutation(description="""Inserts a new preference settings, 
                      If name already exists, operation will fail,
                      if no ID is given, generates a new one""", permission_classes=[OnlyForAuthentized()])
 async def preference_settings_insert(self, info: strawberry.types.Info, preference_settings: PreferenceSettingsInsertGQLModel) -> PreferenceSettingsResultGQLModel:
@@ -234,13 +234,13 @@ async def preference_settings_insert(self, info: strawberry.types.Info, preferen
     return PreferenceSettingsResultGQLModel(id=preference_settings.id, msg="OK, created")
  
 
-# Update already existing PreferenceSettingsType
-@strawberry.mutation(description="""Updates already existing settings type
+# Update already existing PreferenceSettings
+@strawberry.mutation(description="""Updates already existing settings
                      requires ID and lastchange""", permission_classes=[OnlyForAuthentized()])
 async def preference_settings_update(self, info: strawberry.types.Info, preference_settings: PreferenceSettingsUpdateGQLModel) -> PreferenceSettingsResultGQLModel:
     actingUser = getUser(info)
     loader = getLoaders(info).preference_settings
-    preference_settings.changedby = actingUser["id"]
+    preference_settings.changedby = UUID(actingUser["id"])
 
     row = await loader.update(preference_settings)
     if row is None:

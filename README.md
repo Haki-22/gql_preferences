@@ -141,6 +141,12 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
 
 - Changed systamdata.json, preferencesettings and tags to follow new default user (John Newbie, 2d9dc5ca-a4a2-11ed-b9df-0242ac120003)
 
+- Fixed PreferenceTagEntityGQL -> preference_entities_labeled -> because of changed main and now  asyncSessionMaker = info.context["asyncSessionMaker"] is invalid
+
+- Changed actingUser["id"] to UUID(actingUser["id"])
+
+- Pytest up to 
+
 ---
 
 ## Notes
@@ -157,17 +163,60 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
  
     `source .venv/bin/activate.ps1`
 
+
+- Docker:
+
+  POSTGRES_HOST : host.docker.internal:5432
+
+- Specific Pytest:
+
+   ```
+  pytest --cov-report term-missing --cov=gql_preferences.DBDefinitions --cov=gql_preferences.GraphTypeDefinitions --cov=gql_preferences.utils  --log-cli-level=INFO -x .\tests\test_gt_definitions\test_PreferenceTagEntityGQLModel.py::test_preference_tag_remove_from_entity
+  ```
+
 ---
 
 ## TODO
 
 Pretify code (Unify)
 
+  PreferenceTagEntityGQL -> preference_entities_labeled
+
 Docker image
+  
+  - Map to dockerhost no to localhost
 
-tests
+tests:
 
-- rbacobject to what queries?
+  Všechny query / mutations co mám
+
+  Všechny možnosti co může query vhyodit?
+
+  ```
+  preferenceSettings {
+                    name
+                    lastchange
+                    id
+                }
+  ```
+
+  vs
+
+  ```
+  preferenceSettings {
+                    name
+                    lastchange
+                    id
+                    changedby
+                    created
+                    nameEn
+                    lastchange
+                    ...
+                }
+  ```
+
+
+- rbacobject to what all queries
 
 Fronted loads into default and should search for user specific user settings if there are some -> apply them.
 
@@ -252,4 +301,3 @@ Kompletní CRUD dotazy na GQL v souboru externalids_queries.json (dictionary), j
 Kompletní popisy API v kódu (description u GQLModelů) a popisy DB vrstvy (comment u DBModelů).
 
 Zabezpečte více jak 90% code test coverage (standard pytest).
-

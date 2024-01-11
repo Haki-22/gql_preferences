@@ -27,48 +27,49 @@ PreferenceSettingsGQLModel = Annotated["PreferenceSettingsGQLModel", strawberry.
 @strawberry.federation.type(keys=["id"], description="Entity representing types of preference settings like language, theme")
 class PreferenceSettingsTypeGQLModel(BaseGQLModel):
     @classmethod
-    async def resolve_reference(cls, info: strawberry.types.Info, id: UUID):
-        if id is None:
-            return None
-        loader = getLoaders(info).preference_settings_types
-        result = await loader.load(id)
-        if result is not None:
-            result._type_definition = cls._type_definition  # Little hack :)
-        return result
+    def getLoader(cls, info):
+        return getLoaders(info).preference_settings_types
 
-    # Fields representing properties of the PreferenceSettings
-    @strawberry.field(description="primary key")
-    async def id(self, info: strawberry.types.Info) -> UUID:
-        return self.id
-
-    """ @strawberry.field(description="name of the type preference")
-    async def name(self, info: strawberry.types.Info) -> str:
-        return self.name """
-    
+    id = resolve_id
     name = resolve_name
+    changedby = resolve_changedby
+    lastchange = resolve_lastchange
+    created = resolve_created
+    createdby = resolve_createdby
+    name_en = resolve_name_en
     rbacobject = resolve_rbacobject
-    
-    @strawberry.field(description="name of the type preference in english")
-    async def name_en(self, info: strawberry.types.Info) -> str:
-        return self.name_en
 
-    @strawberry.field(description="timestamp for when the type preference were created")
-    async def created(self, info: strawberry.types.Info) -> datetime.datetime:
-        return self.created
-    
-    @strawberry.field(description="user who created the type preference")
-    async def createdby(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
-        result = await UserGQLModel.resolve_reference(id=self.createdby)
-        return result
 
-    @strawberry.field(description="timestamp for the last change to the type preference")
-    async def lastchange(self, info: strawberry.types.Info) -> datetime.datetime:
-        return self.lastchange
-
-    @strawberry.field(description="user who last changed the type preference")
-    async def changedby(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
-        result = await UserGQLModel.resolve_reference(id=self.changedby)
-        return result
+#    """  # Fields representing properties of the PreferenceSettings
+#    @strawberry.field(description="primary key")
+#    async def id(self, info: strawberry.types.Info) -> UUID:
+#        return self.id
+#
+#    @strawberry.field(description="name of the type preference")
+#    async def name(self, info: strawberry.types.Info) -> str:
+#        return self.name 
+#    
+#    @strawberry.field(description="name of the type preference in english")
+#    async def name_en(self, info: strawberry.types.Info) -> str:
+#        return self.name_en
+#
+#    @strawberry.field(description="timestamp for when the type preference were created")
+#    async def created(self, info: strawberry.types.Info) -> datetime.datetime:
+#        return self.created
+#    
+#    @strawberry.field(description="user who created the type preference")
+#    async def createdby(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
+#        result = await UserGQLModel.resolve_reference(id=self.createdby)
+#        return result
+#
+#    @strawberry.field(description="timestamp for the last change to the type preference")
+#    async def lastchange(self, info: strawberry.types.Info) -> datetime.datetime:
+#        return self.lastchange
+#
+#    @strawberry.field(description="user who last changed the type preference")
+#    async def changedby(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
+#        result = await UserGQLModel.resolve_reference(id=self.changedby)
+#        return result """
     
     @strawberry.field(description="Preference settings type's order")
     def order(self,  info: strawberry.types.Info) -> Optional[int]:
@@ -95,10 +96,10 @@ class PreferenceSettingsTypeGQLModel(BaseGQLModel):
 #############################################################
 
  # Query for a page of preference types
-"""@strawberry.field(description="Returns page of preference settings types, [opt.] skip=0, limit=20")
-async def preference_settings_type_page(self, info: strawberry.types.Info, skip: int = 0, limit: int = 20) -> List[PreferenceSettingsTypeGQLModel]:
-        loader = getLoaders(info).preference_settings_types
-        return await loader.page(skip, limit) """
+#"""@strawberry.field(description="Returns page of preference settings types, [opt.] skip=0, limit=20")
+#async def preference_settings_type_page(self, info: strawberry.types.Info, skip: int = 0, limit: int = 20) -> List[PreferenceSettingsTypeGQLModel]:
+#        loader = getLoaders(info).preference_settings_types
+#        return await loader.page(skip, limit) """
 
 from dataclasses import dataclass
 from .utils import createInputs
@@ -132,21 +133,21 @@ import uuid
 async def preference_settings_type_by_id(self, info: strawberry.types.Info, id: UUID) -> Optional[PreferenceSettingsTypeGQLModel]:
     return await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=id)
 
-""" @strawberry.field(description="Returns default preference settings in type by it's ID")
-async def preference_settings_default_by_type_id(self, info: strawberry.types.Info, type_id: UUID) -> Optional[UUID]:
-    result = await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=type_id)
-    return result.default_preference_settings_id
- """
-#Returns all preference settings types IDs in an arrays
-async def preference_settings_type_ids(self, info: strawberry.types.Info) -> List[UUID]:
-    typeloader = getLoaders(info).preference_settings_types
-    rows = await typeloader.page()
-    result = []
-    for row in rows:
-        #if row.id:     
-        #print(row.id, "row.id")
-        result.append(row.id)
-    return result
+#@strawberry.field(description="Returns default preference settings in type by it's ID")
+#async def preference_settings_default_by_type_id(self, info: strawberry.types.Info, type_id: UUID) -> Optional[UUID]:
+#    result = await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=type_id)
+#    return result.default_preference_settings_id
+
+##Returns all preference settings types IDs in an arrays
+#async def preference_settings_type_ids(self, info: strawberry.types.Info) -> List[UUID]:
+#    typeloader = getLoaders(info).preference_settings_types
+#    rows = await typeloader.page()
+#    result = []
+#    for row in rows:
+#        #if row.id:     
+#        #print(row.id, "row.id")
+#        result.append(row.id)
+#    return result
 
 # Query for searching default preference settings for a type
 
@@ -212,8 +213,7 @@ For update operation fail should be also stated when bad lastchange has been ent
 
     @strawberry.field(description="Object of CU operation, final version")
     async def preference_settings_type(self, info: strawberry.types.Info) -> PreferenceSettingsTypeGQLModel:
-        result = await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=self.id)
-        return result
+        return await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=self.id)
 #
 #####################################################################
 
@@ -234,8 +234,8 @@ async def preference_settings_type_insert(self, info: strawberry.types.Info, pre
     if row is not None:     
         return PreferenceSettingsTypeResultGQLModel(id=preference_settings_type.id, msg="fail name alreade exist")
 
-    user = getUser(info)
-    preference_settings_type.createdby = uuid.UUID(user["id"])
+    actingUser = getUser(info)
+    preference_settings_type.createdby = uuid.UUID(actingUser["id"])
 
     await loader.insert(preference_settings_type)
     return PreferenceSettingsTypeResultGQLModel(id=preference_settings_type.id, msg="OK, created")
@@ -247,7 +247,7 @@ async def preference_settings_type_insert(self, info: strawberry.types.Info, pre
 async def preference_settings_type_update(self, info: strawberry.types.Info, preference_settings_type: PreferenceSettingsTypeUpdateGQLModel) -> PreferenceSettingsTypeResultGQLModel:
     actingUser = getUser(info)
     loader = getLoaders(info).preference_settings_types
-    preference_settings_type.changedby = actingUser["id"]
+    preference_settings_type.changedby = uuid.UUID(actingUser["id"])
 
     row = await loader.update(preference_settings_type)
     if row is None:

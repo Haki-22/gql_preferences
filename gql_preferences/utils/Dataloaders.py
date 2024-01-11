@@ -403,9 +403,9 @@ def getLoaders(info):
     loaders = context["loaders"]
     return loaders
  """
-# Function to get the user from the GraphQL context
+""" # Function to get the user from the GraphQL context
 def getUser(info):
-    return info.context["user"]
+    return info.context["user"] """
 
 
 
@@ -453,7 +453,7 @@ demouser = {
     ]
 }
 
-def getUserFromInfo(info):
+def getUser(info): #getUserFromInfo
     context = info.context
     #print(list(context.keys()))
     user = context.get("user", None)

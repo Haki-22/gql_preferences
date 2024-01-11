@@ -148,7 +148,7 @@ class PreferenceTagEntityGQLModel(BaseGQLModel):
     async def preference_tags_for_entity_func(info: strawberry.types.Info, entity_id: UUID) -> List["PreferenceTagEntityGQLModel"]:
         
         actingUser = getUser(info)
-        actingUserId = actingUser["id"]
+        actingUserId = UUID(actingUser["id"])
         loader = getLoaders(info).preferedtagentities
         result = await loader.filter_by(author_id=actingUserId, entity_id=entity_id)
         return result
@@ -177,7 +177,7 @@ class PreferenceTagEntityGQLModel(BaseGQLModel):
 tags_description = """Returns page of hardwired entity types for entity_type_id."""
 @strawberry.field(description=tags_description)
 async def preference_entity_types(info: strawberry.types.Info) -> List["PreferenceEntityIdGQLModel"]:
-    result = list(map(lambda item: {"id": item[0], "name": item[1]._type_definition.name}, entity_type_ids.items()))
+    result = list(map(lambda item: {"id": item[0], "name": item[1].__strawberry_definition__.name}, entity_type_ids.items()))
     return result
 
 # list of tags for the entity
@@ -191,30 +191,29 @@ async def preference_entities_labeled(info: strawberry.types.Info, tags: List[UU
     # TODO
     idsSet = set(tags)
     actingUser = getUser(info)
-    actingUserId = actingUser["id"]
+    actingUserId =UUID(actingUser["id"])
 
     loader = getLoaders(info).preferedtagentities
-    asyncSessionMaker = info.context["asyncSessionMaker"]
-    async with asyncSessionMaker() as session:
-        stmt = loader.getSelectStatement()
-        model = loader.getModel()
-        
-        fullstmt = stmt.filter_by(author_id=actingUserId).filter(model.tag_id.in_(tags))
-        rows = await loader.execute_select(fullstmt)
-        indexed = {}
-        for row in rows:
-            key = row.entity_id
-            indexedvalue = indexed.get(key, None)
-            if indexedvalue is None:
-                indexedvalue = {"tags": set(), "type": row.entity_type_id}
-                indexed[key] = indexedvalue
-            indexedvalue["tags"].add(row.tag_id)
-        results = filter(lambda item: idsSet.issubset(item[1]["tags"]), indexed.items())
-        resultList = []
-        for id, value in results:
-            cls = entity_type_ids[value["type"]]
-            resultList.append(await cls.resolve_reference(id=id))
-        return resultList
+
+    stmt = loader.getSelectStatement()
+    model = loader.getModel()
+    
+    fullstmt = stmt.filter_by(author_id=actingUserId).filter(model.tag_id.in_(tags))
+    rows = await loader.execute_select(fullstmt)
+    indexed = {}
+    for row in rows:
+        key = row.entity_id
+        indexedvalue = indexed.get(key, None)
+        if indexedvalue is None:
+            indexedvalue = {"tags": set(), "type": row.entity_type_id}
+            indexed[key] = indexedvalue
+        indexedvalue["tags"].add(row.tag_id)
+    results = filter(lambda item: idsSet.issubset(item[1]["tags"]), indexed.items())
+    resultList = []
+    for id, value in results:
+        cls = entity_type_ids[value["type"]]
+        resultList.append(await cls.resolve_reference(id=id))
+    return resultList
 
 
 #####################################################################
@@ -236,15 +235,15 @@ class PreferenceEntityAddTagGQLModel:
 # GraphQL input representing data to remove a tag from an entity
 @strawberry.input(description="""removes a tag from entity""")
 class PreferenceEntityRemoveTagGQLModel:
-    entity_id: UUID = strawberry.field(default=None, description="GQL entity primary key value, aka GQL entity identification")
-    tag_id: UUID = strawberry.field(default=None, description="tag identification")
-    id: Optional[UUID] = strawberry.field(default=None, description="direct identification of the link, if not given, other two ids are used together")
+    entity_id: Optional[UUID] = strawberry.field(default=None, description="GQL entity primary key value, aka GQL entity identification")
+    tag_id: Optional[UUID] = strawberry.field(default=None, description="tag identification")
+    id: UUID = strawberry.field(default=None, description="direct identification of the link, if not given, other two ids are used together")
 
 # GraphQL type representing the result of a tag-related operation
 @strawberry.type(description="reports the result of operation")
 class PreferenceEntityTagResultGQLModel:
     msg: str = strawberry.field(default=None, description="""result of operation, should be "ok" or "fail" """)
-    id: Optional[UUID] = strawberry.field(default=None, description="tag id, could be undefined if the operation was delete")
+    id: Optional[UUID] = strawberry.field(default=None, description="tag id")
     @strawberry.field(description="""""")
     async def tag(self, info: strawberry.types.Info) -> Union[PreferenceTagEntityGQLModel, None]:
         result = await PreferenceTagEntityGQLModel.resolve_reference(info, self.id)
@@ -274,11 +273,11 @@ async def preference_tag_remove_from_entity(self, info: strawberry.types.Info, t
     
     actingUser = getUser(info)
     loader = getLoaders(info).preferedtagentities
-    if tag_data.id is None:
-        rows = await loader.filter_by(tag_id=tag_data.tag_id, entity_id=tag_data.entity_id)
-        row = next(rows, None)
-    else:
-        row = await loader.load(tag_data.id)
+    #if tag_data.id is None:
+    #    rows = await loader.filter_by(tag_id=tag_data.tag_id, entity_id=tag_data.entity_id)
+    #    row = next(rows, None)
+    #else:
+    row = await loader.load(tag_data.id)
 
     result = PreferenceEntityTagResultGQLModel()
     if row is None:

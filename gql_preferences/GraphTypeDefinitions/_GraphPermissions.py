@@ -272,7 +272,7 @@ def RolesToList(roles: str = ""):
     roleIdsNeeded = list(map(lambda roleName: roleIndex[roleName], roleNames))
     return roleIdsNeeded
 
-from ..utils.Dataloaders import getLoaders, getUserFromInfo
+from ..utils.Dataloaders import getLoaders, getUser
 # from ._RBACObjectGQLModel import RBACObjectGQLModel
 
 # async def resolveRoles(info, id):

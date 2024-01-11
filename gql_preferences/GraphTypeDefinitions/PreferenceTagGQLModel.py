@@ -51,7 +51,7 @@ class PreferenceTagGQLModel(BaseGQLModel):
     @strawberry.field(description="Retrieves the user")
     async def author_id(self, info: strawberry.types.Info) -> Optional["UserGQLModel"]:
         from .externals import UserGQLModel
-        return await UserGQLModel.resolve_reference(id=self.author_id)
+        return await UserGQLModel.resolve_reference(id=UUID(self.author_id))
 
 
 #####################################################################
@@ -74,7 +74,7 @@ tags_description = """Returns list of tags associated with asking user."""
 async def preference_tags(self, info: strawberry.types.Info) -> List["PreferenceTagGQLModel"]:
     actingUser = getUser(info)
     loader = getLoaders(info).preferedtags
-    return await loader.filter_by(author_id=actingUser["id"])
+    return await loader.filter_by(author_id=UUID(actingUser["id"]))
 
 # New query field for searching by ID
 @strawberry.field(description="Returns a tag by ID")
@@ -135,10 +135,10 @@ async def preference_tag_insert(self, info: strawberry.types.Info, tag: Preferen
     
     actingUser = getUser(info)
     loader = getLoaders(info).preferedtags
-    tag.changedby = actingUser["id"]
-    tag.author_id = actingUser["id"]
+    tag.changedby = UUID(actingUser["id"])
+    tag.author_id = UUID(actingUser["id"])
     result = PreferenceTagResultGQLModel()
-    rows = await loader.filter_by(name=tag.name, author_id=actingUser["id"])
+    rows = await loader.filter_by(name=tag.name, author_id=UUID(actingUser["id"]))
     row = next(rows, None)
     if row is None:
         row = await loader.insert(tag)
@@ -158,7 +158,7 @@ async def preference_tag_delete(self, info: strawberry.types.Info, tag: Preferen
     result.id = tag.id
     if tag.id is None:
         # rows = await loader.filter_by(author_id=actingUser["id"])
-        rows = await loader.filter_by(name=tag.name, author_id=actingUser["id"])
+        rows = await loader.filter_by(name=tag.name, author_id=UUID(actingUser["id"]))
         row = next(rows, None)
     else:
         row = await loader.load(tag.id)
@@ -176,7 +176,7 @@ async def preference_tag_delete(self, info: strawberry.types.Info, tag: Preferen
 async def preference_tag_update(self, info: strawberry.types.Info, tag: PreferenceTagUpdateGQLModel) -> PreferenceTagResultGQLModel:
     actingUser = getUser(info)
     loader = getLoaders(info).preferedtags
-    tag.updatedby = actingUser["id"]
+    tag.updatedby = UUID(actingUser["id"])
 
     result = PreferenceTagResultGQLModel()
     result.id = tag.id

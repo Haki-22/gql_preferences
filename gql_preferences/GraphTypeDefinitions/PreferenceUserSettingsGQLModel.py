@@ -72,7 +72,7 @@ class PreferenceUserSettingsGQLModel(BaseGQLModel):
         
         if user_id is None:
             actingUser = getUser(info)
-            user_id = actingUser["id"]
+            user_id = UUID(actingUser["id"])
         
         return await loader.filter_by(user_id=user_id)
     
@@ -145,7 +145,7 @@ async def preference_settings_user_in_type(self, info: strawberry.types.Info, pr
     
     if user_id is None:
         actingUser = getUser(info)
-        user_id = actingUser["id"]
+        user_id = UUID(actingUser["id"])
     result = await loader.filter_by(user_id=user_id,preference_settings_type_id=preference_settings_type_id )
     #print(result, "result")
     
@@ -239,7 +239,7 @@ async def preference_user_settings_type_insert(self, info: strawberry.types.Info
 async def preference_user_settings_type_update(self, info: strawberry.types.Info, user_settings: PreferenceUserSettingsUpdateGQLModel) -> PreferenceUserSettingsResultGQLModel:
     actingUser = getUser(info)
     loader = getLoaders(info).user_settings
-    user_settings.changedby = actingUser["id"]
+    user_settings.changedby = UUID(actingUser["id"])
 
     row = await loader.update(user_settings)
     if row is None:
