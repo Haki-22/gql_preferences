@@ -4,7 +4,7 @@ import datetime
 from typing import Union, Optional, List, TYPE_CHECKING, Annotated
 from uuid import UUID, uuid4
 
-from ..utils.Dataloaders import  getLoaders, getUser
+from utils.Dataloaders import  getLoaders, getUser
 from ._GraphPermissions import OnlyForAuthentized
 
 from .BaseGQLModel import BaseGQLModel

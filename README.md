@@ -136,7 +136,7 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
 - Started pytesting 
   
   ```
-  pytest --cov-report term-missing --cov=gql_preferences.DBDefinitions --cov=gql_preferences.GraphTypeDefinitions --cov=gql_preferences.utils  --log-cli-level=INFO -x
+  pytest --cov-report term-missing --cov=DBDefinitions --cov=GraphTypeDefinitions --cov=utils  --log-cli-level=INFO -x
   ```
 
 - Changed systamdata.json, preferencesettings and tags to follow new default user (John Newbie, 2d9dc5ca-a4a2-11ed-b9df-0242ac120003)
@@ -158,43 +158,66 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
 
 - Changed User Settings to delete the entry if the udpate is to default one
 
-- More pytests, missing authorizations:
+- Changed whole structure (removed gql_preferences folder and moved files to root for pytests)
+
+- Imported authentication middleware from uois helpers
+
+- More pytests, 
+
+  - missing authorizations and expected failiures that require lastchange:
 
  ```
-  ---------- coverage: platform win32, python 3.10.5-final-0 -----------
-  Name                                                                     Stmts   Miss  Cover   Missing
-  ------------------------------------------------------------------------------------------------------
-  gql_preferences\DBDefinitions\Base.py                                       35     18    49%   20-30, 42-50
-  gql_preferences\DBDefinitions\PreferenceSettingsDBModel.py                  19      0   100%
-  gql_preferences\DBDefinitions\PreferenceSettingsTypeDBModel.py              18      0   100%
-  gql_preferences\DBDefinitions\PreferenceTagDBModel.py                       15      0   100%
-  gql_preferences\DBDefinitions\PreferenceTagEntityDBModel.py                 16      0   100%
-  gql_preferences\DBDefinitions\PreferenceUserSettingsDBModel.py              18      0   100%
-  gql_preferences\DBDefinitions\__init__.py                                    6      0   100%
-  gql_preferences\DBDefinitions\uuid.py                                        6      0   100%
-  gql_preferences\GraphTypeDefinitions\BaseGQLModel.py                        19      1    95%   9
-  gql_preferences\GraphTypeDefinitions\PreferenceSettingsGQLModel.py         119      4    97%   260, 267-270
-  gql_preferences\GraphTypeDefinitions\PreferenceSettingsTypeGQLModel.py     132     10    92%   76, 259, 272, 280-289
-  gql_preferences\GraphTypeDefinitions\PreferenceTagEntityGQLModel.py        141      4    97%   266-267, 284-285
-  gql_preferences\GraphTypeDefinitions\PreferenceTagGQLModel.py              116      4    97%   148-149, 167, 185
-  gql_preferences\GraphTypeDefinitions\PreferenceUserSettingsGQLModel.py     131      4    97%   233, 288, 295-297
-  gql_preferences\GraphTypeDefinitions\_GraphPermissions.py                   92     49    47%   44, 191-205, 208, 270-273, 300, 317-385
-  gql_preferences\GraphTypeDefinitions\_GraphResolvers.py                     51      2    96%   280-281
-  gql_preferences\GraphTypeDefinitions\_RBACObjectGQLModel.py                 13      3    77%   14-16
-  gql_preferences\GraphTypeDefinitions\__init__.py                             5      0   100%
-  gql_preferences\GraphTypeDefinitions\externals.py                           39      1    97%   13
-  gql_preferences\GraphTypeDefinitions\mutation.py                            18      0   100%
-  gql_preferences\GraphTypeDefinitions\query.py                               20      0   100%
-  gql_preferences\GraphTypeDefinitions\utils.py                              106      7    93%   30-38
-  gql_preferences\utils\DBFeeder.py                                           40      5    88%   29, 34-36, 61
-  gql_preferences\utils\Dataloaders.py                                       129     50    61%   151-155, 167-171, 174, 177-212, 217-222, 344, 413-414, 461-464, 469-471
-  gql_preferences\utils\authenticationMiddleware.py                          207     83    60%   22-24, 27-38, 41-112, 120-121, 126-127, 166-171, 182, 215, 220-221, 242, 277-278, 281       
-  gql_preferences\utils\gql_ug_proxy.py                                       38      8    79%   29-31, 39-42, 55
-  gql_preferences\utils\sentinel.py                                            8      0   100%
-  ------------------------------------------------------------------------------------------------------
-  TOTAL                                                                     1557    253    84%
+  ==================================================================================== warnings summary ==================================================================================== 
+  .venv\lib\site-packages\strawberry\types\fields\resolver.py:229
+    gql_preferences\.venv\lib\site-packages\strawberry\types\fields\resolver.py:229: DeprecationWarning: Argument name-based matching of 'info' is deprecated and will 
+  be removed in v1.0. Ensure that reserved arguments are annotated their respective types (i.e. use value: 'DirectiveValue[str]' instead of 'value: str' and 'info: Info' instead of a plain 
+  'info').
+      return {spec: spec.find(parameters, self) for spec in self.RESERVED_PARAMSPEC}
 
-  ======================================================================= 43 passed, 1 warning in 161.38s (0:02:41) ========================================================================
+  tests/test_gt_definitions/test_PreferenceSettingsGQLModel.py: 9 warnings
+  tests/test_gt_definitions/test_PreferenceSettingsTypeGQLModel.py: 10 warnings
+  tests/test_gt_definitions/test_PreferenceTagEntityGQLModel.py: 7 warnings
+  tests/test_gt_definitions/test_PreferenceTagGQLModel.py: 9 warnings
+  tests/test_gt_definitions/test_PreferenceUserSettingsGQLModel.py: 10 warnings
+  tests/test_gt_definitions/test__permisions.py: 4 warnings
+    gql_preferences\.venv\lib\site-packages\pytest_asyncio\plugin.py:884: DeprecationWarning: There is no current event loop
+      _loop = asyncio.get_event_loop()
+
+  -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+  ---------- coverage: platform win32, python 3.10.5-final-0 -----------
+  Name                                                     Stmts   Miss  Cover   Missing
+  --------------------------------------------------------------------------------------
+  DBDefinitions\Base.py                                       35     18    49%   20-30, 42-50
+  DBDefinitions\PreferenceSettingsDBModel.py                  19      0   100%
+  DBDefinitions\PreferenceSettingsTypeDBModel.py              18      0   100%
+  DBDefinitions\PreferenceTagDBModel.py                       15      0   100%
+  DBDefinitions\PreferenceTagEntityDBModel.py                 16      0   100%
+  DBDefinitions\PreferenceUserSettingsDBModel.py              18      0   100%
+  DBDefinitions\__init__.py                                    6      0   100%
+  DBDefinitions\uuid.py                                        6      0   100%
+  GraphTypeDefinitions\BaseGQLModel.py                        19      1    95%   9
+  GraphTypeDefinitions\PreferenceSettingsGQLModel.py         119      4    97%   260, 267-270
+  GraphTypeDefinitions\PreferenceSettingsTypeGQLModel.py     132      7    95%   280-289
+  GraphTypeDefinitions\PreferenceTagEntityGQLModel.py        141      2    99%   266-267
+  GraphTypeDefinitions\PreferenceTagGQLModel.py              116      1    99%   185
+  GraphTypeDefinitions\PreferenceUserSettingsGQLModel.py     131      3    98%   288, 295-297
+  GraphTypeDefinitions\_GraphPermissions.py                   92     52    43%   44, 191-205, 208, 270-273, 294-295, 300, 311, 317-385
+  GraphTypeDefinitions\_GraphResolvers.py                     51      2    96%   280-281
+  GraphTypeDefinitions\_RBACObjectGQLModel.py                 13      3    77%   14-16
+  GraphTypeDefinitions\__init__.py                             5      0   100%
+  GraphTypeDefinitions\externals.py                           39      1    97%   13
+  GraphTypeDefinitions\mutation.py                            18      0   100%
+  GraphTypeDefinitions\query.py                               20      0   100%
+  GraphTypeDefinitions\utils.py                              106      7    93%   30-38
+  utils\DBFeeder.py                                           40      5    88%   29, 34-36, 61
+  utils\Dataloaders.py                                       129     50    61%   151-155, 167-171, 174, 177-212, 217-222, 344, 413-414, 461-464, 469-471
+  utils\gql_ug_proxy.py                                       38      8    79%   29-31, 39-42, 55
+  utils\sentinel.py                                            8      0   100%
+  --------------------------------------------------------------------------------------
+  TOTAL                                                     1350    164    88%
+
+  ====================================================================== 49 passed, 50 warnings in 206.70s (0:03:26) ======================================================================= 
   ```
 
 ---
@@ -221,7 +244,7 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
 - Specific Pytest:
 
    ```
-  pytest --cov-report term-missing --cov=gql_preferences.DBDefinitions --cov=gql_preferences.GraphTypeDefinitions --cov=gql_preferences.utils  --log-cli-level=INFO -x .\tests\test_gt_definitions\test_PreferenceTagEntityGQLModel.py::test_preference_tag_remove_from_entity
+  pytest --cov-report term-missing --cov=DBDefinitions --cov=GraphTypeDefinitions --cov=utils  --log-cli-level=INFO -x .\tests\test_gt_definitions\test_PreferenceUserSettingsGQLModel.py::test_update_preference_settings_type
   ```
 
 ---
@@ -230,29 +253,25 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
 
 Pretify code (Unify)
 
-  PreferenceTagEntityGQL -> preference_entities_labeled
+  - PreferenceTagEntityGQL -> preference_entities_labeled
 
+  - Comment code
 
 tests:
 
-  - Delete tests
-
-  - Some fail tests missing 
+  - Fail tests missing when they need lastchange (updates) (CreateUpdateQuery isnt meant to check for failiures)
 
   - Authorized tests missing
 
-
 Fronted loads into default and should search for user specific user settings if there are some -> apply them.
 
-#### Use the same entity resolution? (return whole enitty not just ID)  (PreferenceTagEntityGQLModel)
+Use the same entity resolution? (return whole enitty not just ID)  (PreferenceTagEntityGQLModel)
 
-- Whole GQL model for EntityTypes? 
- 
-@strawberry.field(description="Retrieves the entity_type_id ") 
-  def entity_type_id(self) -> UUID:
-      return self.entity_type_id
-
-- Check Mutations
+  - Whole GQL model for EntityTypes? 
+  
+  @strawberry.field(description="Retrieves the entity_type_id ") 
+    def entity_type_id(self) -> UUID:
+        return self.entity_type_id
 
 - Map all groups, events, users, facilities to existing data? (GraphTypeDefinitions/PreferenceTagEntityGQLModel)
 
@@ -270,33 +289,11 @@ entity_type_ids = {                                                 #Identify al
 
 ## ?
 
-TagType - je v GraphTypeDefinitions/TaEntityGQLModel.entity_type_ids  
-
 Při updatu Preference Settings, neměla by nastat změna lastchange u Preference Settings Type?
 
 Result entity?
 
 name_en u tagů? Nebo si jména vytváří user?
-
-
-```
-query MyQuery {
-  defaultPreferenceSettingsByTypeId(
-    typeId: "90838aab-d06e-445e-9a2e-d3c55bc7cb90"
-  ) {
-    id
-    name
-    type {
-      id
-      name
-      preferenceSettings {
-        nameEn
-        id
-      }
-    }
-  }
-}
-```
 
 filter_by nejde pouzit s ARRAY, porovnana ID=ID PreferenceSettingsGQLModel -> user_settings_page
 

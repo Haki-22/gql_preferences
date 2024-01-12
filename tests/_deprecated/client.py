@@ -8,12 +8,12 @@ def createGQLClient():
 
     from fastapi import FastAPI
     from fastapi.testclient import TestClient
-    import gql_preferences.DBDefinitions
+    import DBDefinitions
 
     def ComposeCString():
         return "sqlite+aiosqlite:///:memory:"
     
-    gql_preferences.DBDefinitions.ComposeConnectionString = ComposeCString
+    DBDefinitions.ComposeConnectionString = ComposeCString
 
     import main
     

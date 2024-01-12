@@ -2,7 +2,7 @@
 import strawberry
 from uuid import UUID
 from typing import List, Annotated, Optional
-from ..utils.Dataloaders import  getLoaders
+from utils.Dataloaders import  getLoaders
 
 PreferenceUserSettingsGQLModel = Annotated["PreferenceUserSettingsGQLModel", strawberry.lazy(".PreferenceUserSettingsGQLModel")]
 PreferenceTagEntityGQLModel = Annotated["PreferenceTagEntityGQLModel", strawberry.lazy(".PreferenceTagEntityGQLModel")]

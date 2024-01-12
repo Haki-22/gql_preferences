@@ -94,10 +94,48 @@ test_tag_associated_with_user = createFrontendQuery(
 #####################################################################
 
 #Remove tag
-test_preference_tag_remove_from_entity = createFrontendQuery(
+test_preference_tag_remove = createFrontendQuery(
     query="""
         mutation {
             preferenceTagDelete(tag: {id: "7a4c203e-2e3a-4ea0-9037-baa38d8400d2"}) {
+                id
+                msg
+                tag {
+                id
+                }
+            }
+        }
+"""
+)
+
+#####################################################################
+#
+# expected failures
+#
+#####################################################################
+
+#Fail name already exists
+test_tag_insert_fail = createFrontendQuery(query="""
+    mutation($name: String!) { 
+        result: preferenceTagInsert(tag: {name: $name}) { 
+            id
+            msg
+            tag {
+                id
+                name
+            }
+        }
+    }
+    """, 
+    variables={"name": "red"}
+)
+
+
+#Remove tag - Fail bad ID
+test_preference_tag_remove_fail = createFrontendQuery(
+    query="""
+        mutation {
+            preferenceTagDelete(tag: {id: "11838aab-d06e-445e-9a2e-d3c55bc7cb11"}) {
                 id
                 msg
                 tag {

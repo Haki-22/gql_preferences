@@ -12,7 +12,7 @@ import pytest
 # from ..uoishelpers.uuid import UUIDColumn
 os.environ.setdefault("DEMO", "True")
 
-from gql_preferences.DBDefinitions import (
+from DBDefinitions import (
     BaseModel,
     PreferenceTagDBModel,
     PreferenceTagEntityDBModel
@@ -36,7 +36,7 @@ async def prepare_in_memory_sqllite():
     return async_session_maker
 
 
-from gql_preferences.utils.DBFeeder import get_demodata
+from utils.DBFeeder import get_demodata
 
 
 async def prepare_demodata(async_session_maker):
@@ -54,7 +54,7 @@ async def prepare_demodata(async_session_maker):
     )
 
 
-from gql_preferences.utils.Dataloaders import createLoadersContext
+from utils.Dataloaders import createLoadersContext
 #from utils.gql_ug_proxy import createProxy
 
 def createContext(asyncSessionMaker, withuser=True):
@@ -91,7 +91,7 @@ def createInfo(asyncSessionMaker, withuser=True):
     return Info()
 
 
-from gql_preferences.GraphTypeDefinitions import schema
+from GraphTypeDefinitions import schema
 
 def CreateSchemaFunction():
     async def result(query, variables={}):

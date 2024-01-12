@@ -156,6 +156,20 @@ test_preference_tag_add_to_entity = createFrontendQuery(
 #"""
 #)
 
+#Remove tag from entity by ID fil bcs of bad id
+test_preference_tag_remove_from_entity_fail = createFrontendQuery(
+    query="""
+        mutation {
+            preferenceTagRemoveFromEntity(tagData: {id: "11838aab-d06e-445e-9a2e-d3c55bc7cb11"}) 
+                {
+                    id
+                    msg
+                }
+    }
+"""
+)
+
+
 #####################################################################
 #
 # Delete

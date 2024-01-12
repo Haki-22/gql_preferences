@@ -1,7 +1,7 @@
 from functools import cache
 import logging
 
-from gql_preferences.DBDefinitions import (
+from DBDefinitions import (
     PreferenceTagModel, 
     PreferenceTagEntityModel,
     PreferenceSettingsTypeModel,

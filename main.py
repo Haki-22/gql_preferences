@@ -1,8 +1,8 @@
 #import asyncio
 #
 ##from api.dbdefinitions import ComposeConnectionString, startEngine
-#from gql_preferences.utils.DBFeeder import initDB
-#from gql_preferences.DBDefinitions import ComposeConnectionString, startEngine
+#from utils.DBFeeder import initDB
+#from DBDefinitions import ComposeConnectionString, startEngine
 #
 #connectionString = ComposeConnectionString()
 #
@@ -41,7 +41,7 @@
 #
 #
 #from strawberry.asgi import GraphQL
-#from gql_preferences.utils.Dataloaders import createDataLoders
+#from utils.Dataloaders import createDataLoders
 #
 #class MyGraphQL(GraphQL):
 #    """Rozsirena trida zabezpecujici praci se session"""
@@ -69,7 +69,7 @@
 #from fastapi import  FastAPI
 #app = FastAPI()
 #
-#from gql_preferences.GraphTypeDefinitions import schema
+#from GraphTypeDefinitions import schema
 #graphql_app = MyGraphQL(schema, graphiql=True, allow_queries_via_get=False)
 #app.mount("/gql", graphql_app)
 #
@@ -114,8 +114,8 @@ from fastapi import FastAPI, Request, Depends
 from strawberry.fastapi import GraphQLRouter
 from contextlib import asynccontextmanager
 
-from gql_preferences.DBDefinitions import ComposeConnectionString, startEngine
-from gql_preferences.utils.DBFeeder import initDB
+from DBDefinitions import ComposeConnectionString, startEngine
+from utils.DBFeeder import initDB
 
 ## Zabezpecuje prvotni inicializaci DB a definovani Nahodne struktury pro "Univerzity"
 # from gql_workflow.DBFeeder import createSystemDataStructureRoleTypes, createSystemDataStructureGroupTypes
@@ -145,9 +145,9 @@ async def initEngine(app: FastAPI):
     yield
 
 
-from gql_preferences.GraphTypeDefinitions import schema
-from gql_preferences.utils.Dataloaders import createLoadersContext, createUgConnectionContext 
-from gql_preferences.utils.sentinel import sentinel
+from GraphTypeDefinitions import schema
+from utils.Dataloaders import createLoadersContext, createUgConnectionContext 
+from utils.sentinel import sentinel
 
 async def get_context(request: Request):
     asyncSessionMaker = appcontext.get("asyncSessionMaker", None)

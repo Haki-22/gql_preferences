@@ -10,7 +10,7 @@ from .gt_utils import (
 )
 
 
-test_reference_preference_settings_type = createResolveReferenceTest(tableName='preference_settings_types', gqltype='PreferenceSettingsTypeGQLModel', attributeNames=["id", "name", "lastchange"])
+test_reference_preference_settings_type = createResolveReferenceTest(tableName='preference_settings_types', gqltype='PreferenceSettingsTypeGQLModel', attributeNames=["id", "name", "lastchange", "defaultPreferenceSettingsId"])
 
 test_query_preference_settings_type_by_id = createByIdTest(tableName="preference_settings_types", queryEndpoint="preferenceSettingsTypeById")
 test_query_preference_settings_type_page = createPageTest(tableName="preference_settings_types", queryEndpoint="preferenceSettingsTypePage")
@@ -95,20 +95,34 @@ test_insert_preference_settings_type_with_existing_name = createFrontendQuery(
 # Create update query wasnt meant to be testing expected failitues
 # 
 
-#test_delete_preference_settings_type_bad_id = createUpdateQuery(
-#    query="""
-#
-#        mutation ($id: UUID!, $lastchange: DateTime!) {
-#            result: preferenceSettingsTypeDelete(
-#            preferenceSettingsType: {id: $id, lastchange: $lastchange})
-#            {
-#                id
-#                msg
-#            }
-#        }""",
-#        variables={"id":"789a8aab-d06e-445e-982e-d3c55bc7cb90"},
-#        tableName="preference_settings_types"
-#)
+test_delete_preference_settings_type_bad_id = createFrontendQuery(
+    query="""
+        mutation ($id: UUID!, $lastchange: DateTime!) {
+            result: preferenceSettingsTypeDelete(
+            preferenceSettingsType: {id: $id, lastchange: $lastchange})
+            {
+                id
+                msg
+            }
+        }""",
+        variables={"id":"789a8aab-d06e-445e-982e-d3c55bc7cb90", "lastchange": "2024-01-12T16:53:59.454452"},
+)
+
+test_update_preference_settings_type_fail = createFrontendQuery(
+    query="""mutation ($id: UUID!, $name: String!, $lastchange: DateTime!) {
+        result: preferenceSettingsTypeUpdate(
+            preferenceSettingsType: {id: $id, name: $name, lastchange: $lastchange})
+             {
+                id
+                msg
+                preferenceSettingsType {
+                    id
+                    name
+                }
+            }
+    }""",
+    variables={"id": "89838aab-d06e-445e-982a-d3c55bc7cb90", "name": "updated name", "lastchange": "2024-01-12T16:53:59.454452"},
+)
 
 #####################################################################
 #

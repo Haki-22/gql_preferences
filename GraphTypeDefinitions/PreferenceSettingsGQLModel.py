@@ -6,7 +6,7 @@ import logging
 from .externals import UserGQLModel, GroupGQLModel, FacilityGQLModel, EventGQLModel
 from uuid import UUID, uuid4
 
-from ..utils.Dataloaders import  getLoaders, getUser
+from utils.Dataloaders import  getLoaders, getUser
 from ._GraphPermissions import OnlyForAuthentized, RoleBasedPermission
 
 from .BaseGQLModel import BaseGQLModel

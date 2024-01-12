@@ -159,6 +159,40 @@ test_update_preference_settings_for_user_bad_lastchange = createFrontendQuery(
         }
 """,
 )
+
+test_insert_preference_settings_for_user_already_existing = createFrontendQuery(
+    query="""
+        mutation MyMutation {
+        preferenceUserSettingsTypeInsert(
+            userSettings: {preferenceSettingsId: "928a8aab-d06e-445e-982e-d3c55bc7cb91", preferenceSettingsTypeId: "89838aab-d06e-445e-9a2e-d3c55bc7cb90"}
+        ) {
+            id
+            msg
+            }
+    }"""
+)
+
+## Create update query wasnt meant to be testing expected failitues
+
+#test_delete__preference_settings_for_user_fail_bad_id = createUpdateQuery(
+#    query="""
+#
+#        mutation ($id: UUID!, $lastchange: DateTime!) {
+#            result: preferenceUserSettingsDelete(
+#            userSettings: {id: $id, lastchange: $lastchange})
+#            {
+#                id
+#                msg
+#                preferenceUserSettings{
+#                    id
+#                }
+#                
+#            }
+#        }""",
+#        variables={"id":"928a8aab-d06e-445e-982e-d3c55bc7cb91"},
+#        tableName="user_settings"
+#)
+
 #
 ##### Cant get to make it go through line 247, even the msg is "fail"
 ## Create update query wasnt meant to be testing expected failitues

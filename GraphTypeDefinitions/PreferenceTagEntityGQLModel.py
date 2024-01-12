@@ -4,7 +4,7 @@ from typing import Union, Optional, List, Annotated
 
 from .externals import UserGQLModel, GroupGQLModel, FacilityGQLModel, EventGQLModel
 
-from ..utils.Dataloaders import  getLoaders, getUser
+from utils.Dataloaders import  getLoaders, getUser
 from ._GraphPermissions import OnlyForAuthentized
 
 from uuid import UUID
