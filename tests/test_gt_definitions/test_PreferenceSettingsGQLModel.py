@@ -92,6 +92,39 @@ test_insert_preference_settings_with_existing_name = createFrontendQuery(
     variables={"preferenceSettingsTypeId": "89838aab-d06e-445e-9a2e-d3c55bc7cb90", "name": "Zapnute"}
 )
 
+test_update_preference_settings_fail = createFrontendQuery(
+    query="""mutation ($id: UUID!, $name: String!, $lastchange: DateTime!) {
+        result: preferenceSettingsUpdate(
+            preferenceSettings: {id: $id, name: $name, lastchange: $lastchange})
+             {
+                id
+                msg
+                preferenceSettings {
+                    id
+                    name
+                }
+            }
+    }""",
+    variables={"id": "918a8aab-d06e-445e-982e-d3c55bc7cb91", "name": "updated name", "lastchange": "2024-01-12T14:32:19.259899"},
+)
+
+# 260, doesnt work?
+test_delete_preference_settings_fail = createFrontendQuery(
+    query="""mutation ($id: UUID!, $lastchange: DateTime!) {
+        result: preferenceSettingsDelete(
+            preferenceSettings: {id: $id, lastchange: $lastchange})
+             {
+                id
+                msg
+                preferenceSettings {
+                    id
+                    name
+                }
+            }
+    }""",
+    variables={"id": "918a8aab-d06e-445e-982e-d3c55bc7cb91", "lastchange": "2024-01-12T14:32:19.259899"},
+)
+
 #### Cant get to make it go through line 247, even the msg is "fail"
 # Create update query wasnt meant to be testing expected failitues
 # 
@@ -120,7 +153,6 @@ test_insert_preference_settings_with_existing_name = createFrontendQuery(
 
 test_delete_preference_settings = createUpdateQuery(
     query="""
-
         mutation ($id: UUID!, $lastchange: DateTime!) {
             result: preferenceSettingsDelete(
             preferenceSettings: {id: $id, lastchange: $lastchange})

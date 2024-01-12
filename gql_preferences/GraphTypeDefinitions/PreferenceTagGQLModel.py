@@ -42,16 +42,16 @@ class PreferenceTagGQLModel(BaseGQLModel):
     rbacobject = resolve_rbacobject
     
 
-    @strawberry.field(description="""entities marked with this tag""")
+    @strawberry.field(description="""entities marked with this tag""", permission_classes=[OnlyForAuthentized()])
     async def links(self, info: strawberry.types.Info) -> List["PreferenceTagEntityGQLModel"]:
         loader = getLoaders(info).preferedtagentities
         result = await loader.filter_by(tag_id=self.id)
         return result
 
-    @strawberry.field(description="Retrieves the user")
+    @strawberry.field(description="Retrieves the user", permission_classes=[OnlyForAuthentized()])
     async def author_id(self, info: strawberry.types.Info) -> Optional["UserGQLModel"]:
         from .externals import UserGQLModel
-        return await UserGQLModel.resolve_reference(id=UUID(self.author_id))
+        return await UserGQLModel.resolve_reference(id=self.author_id)
 
 
 #####################################################################
@@ -61,7 +61,7 @@ class PreferenceTagGQLModel(BaseGQLModel):
 #####################################################################
 
 # Query for a page of preference types
-@strawberry.field(description="""Returns a page of tags, [opt.] skip=0, limit=20""")
+@strawberry.field(description="""Returns a page of tags, [opt.] skip=0, limit=20""", permission_classes=[OnlyForAuthentized()])
 async def preference_tags_page(
         self, info: strawberry.types.Info, skip: int = 0, limit: int = 20
     ) -> List[PreferenceTagGQLModel]:
@@ -77,7 +77,7 @@ async def preference_tags(self, info: strawberry.types.Info) -> List["Preference
     return await loader.filter_by(author_id=UUID(actingUser["id"]))
 
 # New query field for searching by ID
-@strawberry.field(description="Returns a tag by ID")
+@strawberry.field(description="Returns a tag by ID", permission_classes=[OnlyForAuthentized()])
 async def preference_tag_by_id(info: strawberry.types.Info, id: UUID) -> Optional[PreferenceTagGQLModel]:
     """ if id is not UUID: # doesnt work :C
         return None """
@@ -109,8 +109,8 @@ class PreferenceTagUpdateGQLModel:
 
 @strawberry.input(description="""Removes the tag""")
 class PreferenceTagDeleteGQLModel:
-    name: str = strawberry.field(default=None, description="tag name, could be used as an identification")
-    id: Optional[UUID] = strawberry.field(default=None, description="primary key, aka tag identification")
+    name: Optional[str] = strawberry.field(default=None, description="tag name")
+    id: UUID = strawberry.field(default=None, description="primary key, aka tag identification")
 
 
 #####################################################################
@@ -156,12 +156,12 @@ async def preference_tag_delete(self, info: strawberry.types.Info, tag: Preferen
     
     result = PreferenceTagResultGQLModel()
     result.id = tag.id
-    if tag.id is None:
-        # rows = await loader.filter_by(author_id=actingUser["id"])
-        rows = await loader.filter_by(name=tag.name, author_id=UUID(actingUser["id"]))
-        row = next(rows, None)
-    else:
-        row = await loader.load(tag.id)
+    #if tag.id is None:
+    #    # rows = await loader.filter_by(author_id=actingUser["id"])
+    #    rows = await loader.filter_by(name=tag.name, author_id=UUID(actingUser["id"]))
+    #    row = next(rows, None)
+    #else:
+    row = await loader.load(tag.id)
 
     if row is None:
         result.msg = "fail"

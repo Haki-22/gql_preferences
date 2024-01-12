@@ -291,7 +291,7 @@ def OnlyForAuthentized(isList=False):
                 print("DEMO Enabled, not for production")
                 return True
             
-            user = getUserFromInfo(info)
+            user = getUser(info)
             return (False if user is None else True)
             #     return False        
             # return True
@@ -316,7 +316,7 @@ def OnlyForAuthentized(isList=False):
 def RoleBasedPermission(roles: str = "", whatreturn=[]):
     roleIdsNeeded = RolesToList(roles)
 
-    from .externals import RBACObjectGQLModel
+    from ._RBACObjectGQLModel import RBACObjectGQLModel
     class RolebasedPermission(BasePermission):
         message = "User has not appropriate roles"
 
@@ -365,7 +365,7 @@ def RoleBasedPermission(roles: str = "", whatreturn=[]):
             # logging.info(f"RolebasedPermission.authorized {authorizedroles}")
 
             # user_id = "2d9dc5ca-a4a2-11ed-b9df-0242ac120003"
-            user = getUserFromInfo(info)
+            user = getUser(info)
             # logging.info(f"RolebasedPermission.authorized user {user}")
             user_id = user["id"]
             s = [r for r in authorizedroles if (r["roletype"]["id"] in roleIdsNeeded)and(r["user"]["id"] == user_id)]

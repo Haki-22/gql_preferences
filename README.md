@@ -145,7 +145,57 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
 
 - Changed actingUser["id"] to UUID(actingUser["id"])
 
-- Pytest up to 
+- Pytest up to  74%
+
+
+### 11.1.
+
+- Added permission_classes=[OnlyForAuthentized()] to all queries and strawberry fields (GQLModels and _GraphResolvers) (- rbacobject to what all queries)
+
+### 12.1.
+
+- Added None to result GQL model (for delete) Union[GQLModel, None]
+
+- Changed User Settings to delete the entry if the udpate is to default one
+
+- More pytests, missing authorizations:
+
+ ```
+  ---------- coverage: platform win32, python 3.10.5-final-0 -----------
+  Name                                                                     Stmts   Miss  Cover   Missing
+  ------------------------------------------------------------------------------------------------------
+  gql_preferences\DBDefinitions\Base.py                                       35     18    49%   20-30, 42-50
+  gql_preferences\DBDefinitions\PreferenceSettingsDBModel.py                  19      0   100%
+  gql_preferences\DBDefinitions\PreferenceSettingsTypeDBModel.py              18      0   100%
+  gql_preferences\DBDefinitions\PreferenceTagDBModel.py                       15      0   100%
+  gql_preferences\DBDefinitions\PreferenceTagEntityDBModel.py                 16      0   100%
+  gql_preferences\DBDefinitions\PreferenceUserSettingsDBModel.py              18      0   100%
+  gql_preferences\DBDefinitions\__init__.py                                    6      0   100%
+  gql_preferences\DBDefinitions\uuid.py                                        6      0   100%
+  gql_preferences\GraphTypeDefinitions\BaseGQLModel.py                        19      1    95%   9
+  gql_preferences\GraphTypeDefinitions\PreferenceSettingsGQLModel.py         119      4    97%   260, 267-270
+  gql_preferences\GraphTypeDefinitions\PreferenceSettingsTypeGQLModel.py     132     10    92%   76, 259, 272, 280-289
+  gql_preferences\GraphTypeDefinitions\PreferenceTagEntityGQLModel.py        141      4    97%   266-267, 284-285
+  gql_preferences\GraphTypeDefinitions\PreferenceTagGQLModel.py              116      4    97%   148-149, 167, 185
+  gql_preferences\GraphTypeDefinitions\PreferenceUserSettingsGQLModel.py     131      4    97%   233, 288, 295-297
+  gql_preferences\GraphTypeDefinitions\_GraphPermissions.py                   92     49    47%   44, 191-205, 208, 270-273, 300, 317-385
+  gql_preferences\GraphTypeDefinitions\_GraphResolvers.py                     51      2    96%   280-281
+  gql_preferences\GraphTypeDefinitions\_RBACObjectGQLModel.py                 13      3    77%   14-16
+  gql_preferences\GraphTypeDefinitions\__init__.py                             5      0   100%
+  gql_preferences\GraphTypeDefinitions\externals.py                           39      1    97%   13
+  gql_preferences\GraphTypeDefinitions\mutation.py                            18      0   100%
+  gql_preferences\GraphTypeDefinitions\query.py                               20      0   100%
+  gql_preferences\GraphTypeDefinitions\utils.py                              106      7    93%   30-38
+  gql_preferences\utils\DBFeeder.py                                           40      5    88%   29, 34-36, 61
+  gql_preferences\utils\Dataloaders.py                                       129     50    61%   151-155, 167-171, 174, 177-212, 217-222, 344, 413-414, 461-464, 469-471
+  gql_preferences\utils\authenticationMiddleware.py                          207     83    60%   22-24, 27-38, 41-112, 120-121, 126-127, 166-171, 182, 215, 220-221, 242, 277-278, 281       
+  gql_preferences\utils\gql_ug_proxy.py                                       38      8    79%   29-31, 39-42, 55
+  gql_preferences\utils\sentinel.py                                            8      0   100%
+  ------------------------------------------------------------------------------------------------------
+  TOTAL                                                                     1557    253    84%
+
+  ======================================================================= 43 passed, 1 warning in 161.38s (0:02:41) ========================================================================
+  ```
 
 ---
 
@@ -182,41 +232,15 @@ Pretify code (Unify)
 
   PreferenceTagEntityGQL -> preference_entities_labeled
 
-Docker image
-  
-  - Map to dockerhost no to localhost
 
 tests:
 
-  Všechny query / mutations co mám
+  - Delete tests
 
-  Všechny možnosti co může query vhyodit?
+  - Some fail tests missing 
 
-  ```
-  preferenceSettings {
-                    name
-                    lastchange
-                    id
-                }
-  ```
+  - Authorized tests missing
 
-  vs
-
-  ```
-  preferenceSettings {
-                    name
-                    lastchange
-                    id
-                    changedby
-                    created
-                    nameEn
-                    lastchange
-                    ...
-                }
-  ```
-
-
-- rbacobject to what all queries
 
 Fronted loads into default and should search for user specific user settings if there are some -> apply them.
 

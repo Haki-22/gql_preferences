@@ -48,7 +48,7 @@ class PreferenceSettingsGQLModel(BaseGQLModel):
     name_en = resolve_name_en
     rbacobject = resolve_rbacobject
 
-    @strawberry.field(description="Preference settings's order")
+    @strawberry.field(description="Preference settings's order", permission_classes=[OnlyForAuthentized()])
     def order(self) -> int:
         return self.order if self.order else 0
     
@@ -56,12 +56,12 @@ class PreferenceSettingsGQLModel(BaseGQLModel):
     def default_settings(self) -> int:
         return self.default_settings """
     
-    @strawberry.field(description="Retrieves the preference_settings_type_id ")
+    @strawberry.field(description="Retrieves the preference_settings_type_id ", permission_classes=[OnlyForAuthentized()])
     def preference_settings_type_id(self) -> UUID:
         return self.preference_settings_type_id
 
 
-    @strawberry.field(description="Retrieves the Preference Settings Type")
+    @strawberry.field(description="Retrieves the Preference Settings Type", permission_classes=[OnlyForAuthentized()])
     async def type(self, info: strawberry.types.Info) -> Optional["PreferenceSettingsTypeGQLModel"]:
         from .PreferenceSettingsTypeGQLModel import PreferenceSettingsTypeGQLModel
         result = None if self.preference_settings_type_id is None else await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=self.preference_settings_type_id)
@@ -100,7 +100,7 @@ class PreferenceSettingsWhereFilter:
     from .PreferenceSettingsTypeGQLModel import PreferenceSettingsTypeWhereFilter
     type: PreferenceSettingsTypeWhereFilter
 
-@strawberry.field(description="Returns page of preference settings, [opt.] skip=0, limit=20, where")
+@strawberry.field(description="Returns page of preference settings, [opt.] skip=0, limit=20, where", permission_classes=[OnlyForAuthentized()])
 async def preference_settings_page(self, info: strawberry.types.Info, skip: int = 0, limit: int = 10,
     where: Optional[PreferenceSettingsWhereFilter] = None) -> List[PreferenceSettingsGQLModel]:
 
@@ -110,7 +110,7 @@ async def preference_settings_page(self, info: strawberry.types.Info, skip: int 
 
 
 # Query for searching preference settings  by ID
-@strawberry.field(description="Returns Preference settings by ID")
+@strawberry.field(description="Returns Preference settings by ID", permission_classes=[OnlyForAuthentized()])
 async def preference_settings_by_id(self, info: strawberry.types.Info, id: UUID) -> Optional[PreferenceSettingsGQLModel]:
     return await PreferenceSettingsGQLModel.resolve_reference(info=info, id=id)
 
@@ -183,12 +183,12 @@ class PreferenceSettingsUpdateGQLModel:
 #                   RESULT
 @strawberry.type(description="Result of CU operations")
 class PreferenceSettingsResultGQLModel:
-    id: UUID = strawberry.field(description="primary key of CU operation object")
+    id: Optional[UUID] = strawberry.field(description="primary key of CU operation object")
     msg: str = strawberry.field(description="""Should be `ok` if desired state has been reached, otherwise `fail`.
 For update operation fail should be also stated when bad lastchange has been entered.""")
 
     @strawberry.field(description="Object of CU operation, final version")
-    async def preference_settings(self, info: strawberry.types.Info) -> PreferenceSettingsGQLModel:
+    async def preference_settings(self, info: strawberry.types.Info) -> Union[PreferenceSettingsGQLModel, None]:
         return await PreferenceSettingsGQLModel.resolve_reference(info=info, id=self.id)
 #
 #####################################################################
@@ -244,7 +244,7 @@ async def preference_settings_update(self, info: strawberry.types.Info, preferen
 
     row = await loader.update(preference_settings)
     if row is None:
-        return PreferenceSettingsResultGQLModel(id=preference_settings.id, msg="fail")
+        return PreferenceSettingsResultGQLModel(id=preference_settings.id, msg="fail (bad lastchange?)")
     
     return PreferenceSettingsResultGQLModel(id=preference_settings.id, msg="OK, updated")
 
@@ -264,6 +264,7 @@ async def preference_settings_delete(self, info: strawberry.types.Info, preferen
     if row is None:     
         return PreferenceSettingsResultGQLModel(id=preference_settings.id, msg="Fail (bad lastchange?)")
     
+    id_for_resposne = preference_settings.id
     await loader.delete(preference_settings.id)
     
-    return PreferenceSettingsResultGQLModel(id=preference_settings.id, msg="OK, deleted")
+    return PreferenceSettingsResultGQLModel(id=id_for_resposne, msg="OK, deleted")

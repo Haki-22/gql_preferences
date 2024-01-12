@@ -482,8 +482,8 @@ def createUgConnectionContext(request):
         "ug_connection": connection
     }
 
-def getUgConnection(info):
-    context = info.context
-    print("getUgConnection.context", context)
-    connection = context.get("ug_connection", None)
-    return connection
+#def getUgConnection(info):
+#    context = info.context
+#    print("getUgConnection.context", context)
+#    connection = context.get("ug_connection", None)
+#    return connection

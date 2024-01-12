@@ -1854,7 +1854,8 @@
           "id": "89838aab-d06e-445e-9a2e-d3c55bc7cb90",
           "name": "barevny motiv",
           "name_en": "theme",
-          "default_preference_settings_id":"90838aab-d06e-445e-9a2e-d3c55bc7cb90"
+          "default_preference_settings_id":"90838aab-d06e-445e-9a2e-d3c55bc7cb90",
+          "rbacobject": "2d9dc5ca-a4a2-11ed-b9df-0242ac120003"
         },
         {
           "id": "898a8aab-d06e-445e-982e-d3c55bc7cb90",
@@ -1897,6 +1898,12 @@
             "name_en": "English"
           },
         {
+            "id":"998a8aab-d06e-445e-982e-d3c55bc7cb99",
+            "preference_settings_type_id": "898a8aab-d06e-445e-982e-d3c55bc7cb90",
+            "name": "Vietnamština",
+            "name_en": "Vietnamese"
+          },
+        {
           "id":"928a8aab-d06e-445e-982e-d3c55bc7cb90",
           "preference_settings_type_id": "89838aab-d06e-445e-982a-d3c55bc7cb90",
           "name": "Zapnute",
@@ -1915,13 +1922,13 @@
             "id": "11838aab-d06e-445e-9a2e-d3c55bc7cb11",
             "user_id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120003",
             "preference_settings_type_id":"89838aab-d06e-445e-9a2e-d3c55bc7cb90",
-            "preference_settings_id":"90838aab-d06e-445e-9a2e-d3c55bc7cb90"
+            "preference_settings_id":"90838aab-d06e-445e-9a2e-d3c55bc7cb91"
         },
         {
             "id": "12838aab-d06e-445e-9a2e-d3c55bc7cb12",
             "user_id": "2d9dc5ca-a4a2-11ed-b9df-0242ac120003",
             "preference_settings_type_id":"898a8aab-d06e-445e-982e-d3c55bc7cb90",
-            "preference_settings_id":"918a8aab-d06e-445e-982e-d3c55bc7cb90"
+            "preference_settings_id":"918a8aab-d06e-445e-982e-d3c55bc7cb91"
         }
         
       ]

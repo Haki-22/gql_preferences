@@ -12,6 +12,12 @@ test_reference_tag = createResolveReferenceTest(tableName='preferedtags', gqltyp
 test_query_tag_by_id = createByIdTest(tableName="preferedtags", queryEndpoint="preferenceTagById")
 test_query_tag_page = createPageTest(tableName="preferedtags", queryEndpoint="preferenceTagsPage")
 
+#####################################################################
+#
+# Create
+#
+#####################################################################
+
 test_tag_insert = createFrontendQuery(query="""
     mutation($name: String!) { 
         result: preferenceTagInsert(tag: {name: $name}) { 
@@ -27,8 +33,13 @@ test_tag_insert = createFrontendQuery(query="""
     variables={"name": "new tag"}
 )
 
+#####################################################################
+#
+# Update
+#
+#####################################################################
 
-test_item_update = createUpdateQuery(
+test_tag_update = createUpdateQuery(
     query="""
         mutation($id: UUID!, $name: String!, $lastchange: DateTime!) {
             preferenceTagUpdate(tag: {id: $id, name: $name, lastchange: $lastchange}) {
@@ -45,4 +56,54 @@ test_item_update = createUpdateQuery(
     """,
     variables={"id": "7a4c203e-2e3a-4ea0-9037-baa38d8400d2", "name": "new name"},
     tableName="preferedtags"
+)
+
+#####################################################################
+#
+# Specials
+#
+#####################################################################
+
+####Tags associated with asking user
+test_tag_associated_with_user = createFrontendQuery(
+    query="""
+     query {
+        preferenceTags {
+            authorId {
+                id
+            }
+            changedby {
+                id
+            }
+            created
+            createdby {
+                id
+            }
+            id
+            lastchange
+            name
+            nameEn
+        }
+    }"""
+)
+
+#####################################################################
+#
+# Delete
+#
+#####################################################################
+
+#Remove tag
+test_preference_tag_remove_from_entity = createFrontendQuery(
+    query="""
+        mutation {
+            preferenceTagDelete(tag: {id: "7a4c203e-2e3a-4ea0-9037-baa38d8400d2"}) {
+                id
+                msg
+                tag {
+                id
+                }
+            }
+        }
+"""
 )

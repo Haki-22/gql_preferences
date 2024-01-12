@@ -115,7 +115,7 @@ class PreferenceTagEntityGQLModel(BaseGQLModel):
         return result """
 
 
-    @strawberry.field(description="""Entities associated with this tag""")
+    @strawberry.field(description="""Entities associated with this tag""", permission_classes=[OnlyForAuthentized()])
     async def entities(self, info: strawberry.types.Info) -> List[Optional[Union[UserGQLModel, GroupGQLModel, EventGQLModel, FacilityGQLModel]]]:
         loader = getLoaders(info).preferedtagentities
         #actingUser = getUser(info)
@@ -135,13 +135,13 @@ class PreferenceTagEntityGQLModel(BaseGQLModel):
                 result.append(entity)
         return result
 
-    @strawberry.field(description="Retrieves the tag")
+    @strawberry.field(description="Retrieves the tag", permission_classes=[OnlyForAuthentized()])
     async def tag(self, info: strawberry.types.Info) -> Optional["PreferenceTagGQLModel"]:
         from .PreferenceTagGQLModel import PreferenceTagGQLModel
         result = None if self.tag_id is None else await PreferenceTagGQLModel.resolve_reference(info=info, id=self.tag_id)
         return result
     
-    @strawberry.field(description="Retrieves the entity_type_id ") # Use the same entity resolution? (return whole enitty not just ID)
+    @strawberry.field(description="Retrieves the entity_type_id", permission_classes=[OnlyForAuthentized()]) # Use the same entity resolution? (return whole enitty not just ID)
     async def entity_type_id(self, info: strawberry.types.Info) -> UUID:
         return self.entity_type_id
     
@@ -175,18 +175,18 @@ class PreferenceTagEntityGQLModel(BaseGQLModel):
 
 # list of hardwired models for tags
 tags_description = """Returns page of hardwired entity types for entity_type_id."""
-@strawberry.field(description=tags_description)
+@strawberry.field(description=tags_description, permission_classes=[OnlyForAuthentized()])
 async def preference_entity_types(info: strawberry.types.Info) -> List["PreferenceEntityIdGQLModel"]:
     result = list(map(lambda item: {"id": item[0], "name": item[1].__strawberry_definition__.name}, entity_type_ids.items()))
     return result
 
 # list of tags for the entity
-preference_tags_for_entity = strawberry.field(description="Returns page of tags for the entity.")(PreferenceTagEntityGQLModel.preference_tags_for_entity_func)
+preference_tags_for_entity = strawberry.field(description="Returns page of tags for the entity.", permission_classes=[OnlyForAuthentized()])(PreferenceTagEntityGQLModel.preference_tags_for_entity_func)
 
 
 # list of entities labeled by tags
 entities_description = """Returns page of entities labeled by tags."""
-@strawberry.field(description=entities_description)
+@strawberry.field(description=entities_description, permission_classes=[OnlyForAuthentized()])
 async def preference_entities_labeled(info: strawberry.types.Info, tags: List[UUID]) -> List[Optional[Union[UserGQLModel, GroupGQLModel, EventGQLModel, FacilityGQLModel]]]:
     # TODO
     idsSet = set(tags)

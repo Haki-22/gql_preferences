@@ -70,12 +70,16 @@ class PreferenceSettingsTypeGQLModel(BaseGQLModel):
 #    async def changedby(self, info: strawberry.types.Info) -> Union[UserGQLModel, None]:
 #        result = await UserGQLModel.resolve_reference(id=self.changedby)
 #        return result """
+
+    @strawberry.field(description="Retrieves default preference settings ID", permission_classes=[OnlyForAuthentized()])
+    async def default_preference_settings_id(self, info:strawberry.types.info) -> UUID:
+        return self.default_preference_settings_id
     
-    @strawberry.field(description="Preference settings type's order")
-    def order(self,  info: strawberry.types.Info) -> Optional[int]:
+    @strawberry.field(description="Preference settings type's order", permission_classes=[OnlyForAuthentized()])
+    async def order(self,  info: strawberry.types.Info) -> Optional[int]:
         return self.order if self.order else 0
     
-    @strawberry.field(description="Preference settings")
+    @strawberry.field(description="Preference settings", permission_classes=[OnlyForAuthentized()])
     async def preference_settings(self, info: strawberry.types.Info) -> List["PreferenceSettingsGQLModel"]:
         loader = getLoaders(info).preference_settings
         rows = await loader.filter_by(preference_settings_type_id=self.id)
@@ -87,7 +91,7 @@ class PreferenceSettingsTypeGQLModel(BaseGQLModel):
         result = await PreferenceSettingsGQLModel.resolve_reference(info=info, id=self.default_preference_settings_id)
         return result
     
-    default_preference_settings = strawberry.field(description="Preference settings type's default settings")(default_preference_settings_func)
+    default_preference_settings = strawberry.field(description="Preference settings type's default settings", permission_classes=[OnlyForAuthentized()])(default_preference_settings_func)
 
 #############################################################
 #
@@ -123,15 +127,16 @@ async def preference_settings_type_page_function(self, info: strawberry.types.In
     return await loader.page(skip, limit, where=wf)
 
 # Decorate the function with strawberry
-preference_settings_type_page = strawberry.field(description="Retrieves the preference Settings type page")(preference_settings_type_page_function)
+preference_settings_type_page = strawberry.field(description="Retrieves the preference Settings type page", permission_classes=[OnlyForAuthentized()])(preference_settings_type_page_function)
 
 
 
 import uuid
 # Query for searching preference types by ID
-@strawberry.field(description="""Returns Preference settings type by ID""")
-async def preference_settings_type_by_id(self, info: strawberry.types.Info, id: UUID) -> Optional[PreferenceSettingsTypeGQLModel]:
+async def preference_settings_type_by_id_function(self, info: strawberry.types.Info, id: UUID) -> Optional[PreferenceSettingsTypeGQLModel]:
     return await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=id)
+
+preference_settings_type_by_id = strawberry.field(description="""Returns Preference settings type by ID""", permission_classes=[OnlyForAuthentized()])(preference_settings_type_by_id_function)
 
 #@strawberry.field(description="Returns default preference settings in type by it's ID")
 #async def preference_settings_default_by_type_id(self, info: strawberry.types.Info, type_id: UUID) -> Optional[UUID]:
@@ -158,7 +163,7 @@ async def preference_settings_default_by_type_id_func(self, info: strawberry.typ
     result = await loader.filter_by(id=preference_settings_id)
     return result
 
-preference_settings_default_by_type_id = strawberry.field(description="Returns default preference settings for a type")(preference_settings_default_by_type_id_func)
+preference_settings_default_by_type_id = strawberry.field(description="Returns default preference settings for a type", permission_classes=[OnlyForAuthentized()])(preference_settings_default_by_type_id_func)
 #####################################################################
 #
 # Mutations
@@ -212,7 +217,7 @@ class PreferenceSettingsTypeResultGQLModel:
 For update operation fail should be also stated when bad lastchange has been entered.""")
 
     @strawberry.field(description="Object of CU operation, final version")
-    async def preference_settings_type(self, info: strawberry.types.Info) -> PreferenceSettingsTypeGQLModel:
+    async def preference_settings_type(self, info: strawberry.types.Info) -> Union[PreferenceSettingsTypeGQLModel, None]:
         return await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=self.id)
 #
 #####################################################################
