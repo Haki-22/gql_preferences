@@ -167,11 +167,9 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
   - missing authorizations and expected failiures that require lastchange:
 
  ```
-  ==================================================================================== warnings summary ==================================================================================== 
+  ===================================================================== warnings summary ====================================================================== 
   .venv\lib\site-packages\strawberry\types\fields\resolver.py:229
-    gql_preferences\.venv\lib\site-packages\strawberry\types\fields\resolver.py:229: DeprecationWarning: Argument name-based matching of 'info' is deprecated and will 
-  be removed in v1.0. Ensure that reserved arguments are annotated their respective types (i.e. use value: 'DirectiveValue[str]' instead of 'value: str' and 'info: Info' instead of a plain 
-  'info').
+    z:\SKOLA\5semestr\prg\gql_preferences\.venv\lib\site-packages\strawberry\types\fields\resolver.py:229: DeprecationWarning: Argument name-based matching of 'info' is deprecated and will be removed in v1.0. Ensure that reserved arguments are annotated their respective types (i.e. use value: 'DirectiveValue[str]' instead of 'value: str' and 'info: Info' instead of a plain 'info').
       return {spec: spec.find(parameters, self) for spec in self.RESERVED_PARAMSPEC}
 
   tests/test_gt_definitions/test_PreferenceSettingsGQLModel.py: 9 warnings
@@ -180,7 +178,7 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
   tests/test_gt_definitions/test_PreferenceTagGQLModel.py: 9 warnings
   tests/test_gt_definitions/test_PreferenceUserSettingsGQLModel.py: 10 warnings
   tests/test_gt_definitions/test__permisions.py: 4 warnings
-    gql_preferences\.venv\lib\site-packages\pytest_asyncio\plugin.py:884: DeprecationWarning: There is no current event loop
+    z:\SKOLA\5semestr\prg\gql_preferences\.venv\lib\site-packages\pytest_asyncio\plugin.py:884: DeprecationWarning: There is no current event loop
       _loop = asyncio.get_event_loop()
 
   -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
@@ -199,8 +197,8 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
   GraphTypeDefinitions\BaseGQLModel.py                        19      1    95%   9
   GraphTypeDefinitions\PreferenceSettingsGQLModel.py         119      4    97%   260, 267-270
   GraphTypeDefinitions\PreferenceSettingsTypeGQLModel.py     132      7    95%   280-289
-  GraphTypeDefinitions\PreferenceTagEntityGQLModel.py        141      2    99%   266-267
-  GraphTypeDefinitions\PreferenceTagGQLModel.py              116      1    99%   185
+  GraphTypeDefinitions\PreferenceTagEntityGQLModel.py        141      2    99%   268-269
+  GraphTypeDefinitions\PreferenceTagGQLModel.py              114      0   100%
   GraphTypeDefinitions\PreferenceUserSettingsGQLModel.py     131      3    98%   288, 295-297
   GraphTypeDefinitions\_GraphPermissions.py                   92     52    43%   44, 191-205, 208, 270-273, 294-295, 300, 311, 317-385
   GraphTypeDefinitions\_GraphResolvers.py                     51      2    96%   280-281
@@ -211,13 +209,13 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
   GraphTypeDefinitions\query.py                               20      0   100%
   GraphTypeDefinitions\utils.py                              106      7    93%   30-38
   utils\DBFeeder.py                                           40      5    88%   29, 34-36, 61
-  utils\Dataloaders.py                                       129     50    61%   151-155, 167-171, 174, 177-212, 217-222, 344, 413-414, 461-464, 469-471
+  utils\Dataloaders.py                                       129     50    61%   151-155, 167-171, 174, 177-212, 217-222, 344, 413-414, 461-464, 469-471        
   utils\gql_ug_proxy.py                                       38      8    79%   29-31, 39-42, 55
   utils\sentinel.py                                            8      0   100%
   --------------------------------------------------------------------------------------
-  TOTAL                                                     1350    164    88%
+  TOTAL                                                     1348    163    88%
 
-  ====================================================================== 49 passed, 50 warnings in 206.70s (0:03:26) ======================================================================= 
+  ======================================================== 49 passed, 50 warnings in 237.95s (0:03:57) ======================================================== 
   ```
 
 ---
