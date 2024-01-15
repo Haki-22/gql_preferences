@@ -259,7 +259,7 @@ Pretify code (Unify)
 
 tests:
 
-  - Fail tests missing when they need lastchange (updates) (CreateUpdateQuery isnt meant to check for failiures)
+  - Fail tests missing when they need lastchange (deletes) (CreateUpdateQuery isnt meant to check for failiures)
 
   - Authorized tests missing
 

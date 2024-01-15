@@ -200,6 +200,7 @@ async def preference_entities_labeled(info: strawberry.types.Info, tags: List[UU
     
     fullstmt = stmt.filter_by(author_id=actingUserId).filter(model.tag_id.in_(tags))
     rows = await loader.execute_select(fullstmt)
+    #Take all entities
     indexed = {}
     for row in rows:
         key = row.entity_id
@@ -208,6 +209,7 @@ async def preference_entities_labeled(info: strawberry.types.Info, tags: List[UU
             indexedvalue = {"tags": set(), "type": row.entity_type_id}
             indexed[key] = indexedvalue
         indexedvalue["tags"].add(row.tag_id)
+    # If issubset = True (Entity has both tags) then add to resultlist
     results = filter(lambda item: idsSet.issubset(item[1]["tags"]), indexed.items())
     resultList = []
     for id, value in results:

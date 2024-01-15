@@ -181,8 +181,6 @@ async def preference_tag_update(self, info: strawberry.types.Info, tag: Preferen
     result = PreferenceTagResultGQLModel()
     result.id = tag.id
     row = await loader.update(tag)
-    if row is None:
-        result.msg = "fail"
-    else:
-        result.msg = "ok"        
+    result.msg = "ok" if row is not None else "fail"
+
     return result
