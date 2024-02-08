@@ -6,7 +6,8 @@ from .gt_utils import (
     createPageTest, 
     createResolveReferenceTest, 
     createFrontendQuery, 
-    createUpdateQuery
+    createUpdateQuery,
+    createDeleteQuery
 )
 
 
@@ -97,15 +98,15 @@ test_insert_preference_settings_type_with_existing_name = createFrontendQuery(
 
 test_delete_preference_settings_type_bad_id = createFrontendQuery(
     query="""
-        mutation ($id: UUID!, $lastchange: DateTime!) {
+        mutation ($id: UUID!) {
             result: preferenceSettingsTypeDelete(
-            preferenceSettingsType: {id: $id, lastchange: $lastchange})
+            preferenceSettingsType: {id: $id})
             {
                 id
                 msg
             }
         }""",
-        variables={"id":"789a8aab-d06e-445e-982e-d3c55bc7cb90", "lastchange": "2024-01-12T16:53:59.454452"},
+        variables={"id":"789a8aab-d06e-445e-982e-d3c55bc7cb90"},
 )
 
 test_update_preference_settings_type_fail = createFrontendQuery(
@@ -130,23 +131,22 @@ test_update_preference_settings_type_fail = createFrontendQuery(
 #
 #####################################################################
 
-test_delete_preference_settings_type = createUpdateQuery(
-    query="""
+#test_delete_preference_settings_type = createFrontendQuery(
+#    query="""
+#
+#        mutation ($id: UUID!) {
+#            result: preferenceSettingsTypeDelete(
+#            preferenceSettingsType: {id: $id})
+#            {
+#                id
+#                msg
+#            }
+#        }""",
+#        variables={"id":"898a8aab-d06e-445e-982e-d3c55bc7cb90"}
+#)
 
-        mutation ($id: UUID!, $lastchange: DateTime!) {
-            result: preferenceSettingsTypeDelete(
-            preferenceSettingsType: {id: $id, lastchange: $lastchange})
-            {
-                id
-                msg
-                preferenceSettingsType {
-                    id
-                    }
-            }
-        }""",
-        variables={"id":"898a8aab-d06e-445e-982e-d3c55bc7cb90"},
-        tableName="preference_settings_types"
-)
+
+test_delete_preference_settings_type = createDeleteQuery(tableName="preference_settings_types", queryBase="preferenceSettingsType", id="898a8aab-d06e-445e-982e-d3c55bc7cb90")
 
 #####################################################################
 #

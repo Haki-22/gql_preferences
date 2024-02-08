@@ -204,7 +204,7 @@ class PreferenceSettingsTypeUpdateGQLModel:
 class PreferenceSettingsTypeDeleteGQLModel:
     
     id: uuid.UUID = strawberry.field(description="primary key (UUID), identifies object of operation")
-    lastchange: datetime.datetime = strawberry.field(description="timestamp of last change = TOKEN")
+    #lastchange: datetime.datetime = strawberry.field(description="timestamp of last change = TOKEN")
 
 
 
@@ -219,6 +219,14 @@ For update operation fail should be also stated when bad lastchange has been ent
     @strawberry.field(description="Object of CU operation, final version")
     async def preference_settings_type(self, info: strawberry.types.Info) -> Union[PreferenceSettingsTypeGQLModel, None]:
         return await PreferenceSettingsTypeGQLModel.resolve_reference(info=info, id=self.id)
+    
+# Delete result   
+@strawberry.type(description="Result of D operations")
+class PreferenceSettingsTypeDeleteResultGQLModel:
+    id: uuid.UUID = strawberry.field(description="primary key of CU operation object")
+    msg: str = strawberry.field(description="""Should be `ok` if desired state has been reached, otherwise `fail`.
+For update operation fail should be also stated when bad lastchange has been entered.""")
+
 #
 #####################################################################
 
@@ -262,22 +270,22 @@ async def preference_settings_type_update(self, info: strawberry.types.Info, pre
 
 # Delete existing PreferenceSettingsType
 @strawberry.mutation(description="""Deletes already existing settings type
-                     requires ID and lastchange""", permission_classes=[OnlyForAuthentized()])
-async def preference_settings_type_delete(self, info: strawberry.types.Info, preference_settings_type: PreferenceSettingsTypeDeleteGQLModel) -> PreferenceSettingsTypeResultGQLModel:
+                     requires ID""", permission_classes=[OnlyForAuthentized()])
+async def preference_settings_type_delete(self, info: strawberry.types.Info, preference_settings_type: PreferenceSettingsTypeDeleteGQLModel) -> PreferenceSettingsTypeDeleteResultGQLModel:
     loader = getLoaders(info).preference_settings_types
 
     rows = await loader.filter_by(id=preference_settings_type.id)
     row = next(rows, None)
     if row is None:     
-        return PreferenceSettingsTypeResultGQLModel(id=preference_settings_type.id, msg="Fail bad ID")
+        return PreferenceSettingsTypeDeleteResultGQLModel(id=preference_settings_type.id, msg="Fail bad ID")
 
-    rows = await loader.filter_by(lastchange=preference_settings_type.lastchange)
-    row = next(rows, None)
-    if row is None:     
-        return PreferenceSettingsTypeResultGQLModel(id=preference_settings_type.id, msg="Fail (bad lastchange?)")
+    #rows = await loader.filter_by(lastchange=preference_settings_type.lastchange)
+    #row = next(rows, None)
+    #if row is None:     
+    #    return PreferenceSettingsTypeDeleteResultGQLModel(id=preference_settings_type.id, msg="Fail (bad lastchange?)")
     
     #### Delete all children preference settings 
-    from .PreferenceSettingsGQLModel import preference_settings_delete
+    #from .PreferenceSettingsGQLModel import preference_settings_delete
     preference_settings_loader = getLoaders(info).preference_settings
     rows = await preference_settings_loader.filter_by(preference_settings_type_id=preference_settings_type.id)
     for row in rows:
@@ -286,6 +294,6 @@ async def preference_settings_type_delete(self, info: strawberry.types.Info, pre
         
     await loader.delete(preference_settings_type.id)
 
-    return PreferenceSettingsTypeResultGQLModel(id=preference_settings_type.id, msg="OK, deleted")
+    return PreferenceSettingsTypeDeleteResultGQLModel(id=preference_settings_type.id, msg="OK, deleted")
 
 

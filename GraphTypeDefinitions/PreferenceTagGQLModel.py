@@ -107,9 +107,10 @@ class PreferenceTagUpdateGQLModel:
     lastchange: datetime.datetime = strawberry.field(default=None, description="timestamp")
     updatedby: strawberry.Private[UUID] = None #strawberry.field(default=None, description="user who updates the tag")
 
+################# 
+# Delete
 @strawberry.input(description="""Removes the tag""")
 class PreferenceTagDeleteGQLModel:
-    name: Optional[str] = strawberry.field(default=None, description="tag name")
     id: UUID = strawberry.field(default=None, description="primary key, aka tag identification")
 
 
@@ -124,6 +125,14 @@ class PreferenceTagResultGQLModel:
     async def tag(self, info: strawberry.types.Info) -> Union[PreferenceTagGQLModel, None]:
         result = await PreferenceTagGQLModel.resolve_reference(info, self.id)
         return result
+
+# Delete result   
+@strawberry.type(description="Result of D operations")
+class PreferenceTagDeleteResultGQLModel:
+    id: UUID = strawberry.field(description="primary key of CU operation object")
+    msg: str = strawberry.field(description="""Should be `ok` if desired state has been reached, otherwise `fail`.
+For update operation fail should be also stated when bad lastchange has been entered.""")
+
 #
 #####################################################################
 
@@ -150,26 +159,21 @@ async def preference_tag_insert(self, info: strawberry.types.Info, tag: Preferen
     return result
 
 @strawberry.mutation(description="""deletes the tag""", permission_classes=[OnlyForAuthentized()])
-async def preference_tag_delete(self, info: strawberry.types.Info, tag: PreferenceTagDeleteGQLModel) -> PreferenceTagResultGQLModel:
+async def preference_tag_delete(self, info: strawberry.types.Info, tag: PreferenceTagDeleteGQLModel) -> PreferenceTagDeleteResultGQLModel:
     actingUser = getUser(info)
     loader = getLoaders(info).preferedtags
-    
-    result = PreferenceTagResultGQLModel()
-    result.id = tag.id
+
     #if tag.id is None:
     #    # rows = await loader.filter_by(author_id=actingUser["id"])
     #    rows = await loader.filter_by(name=tag.name, author_id=UUID(actingUser["id"]))
     #    row = next(rows, None)
     #else:
     row = await loader.load(tag.id)
-
-    if row is None:
-        result.msg = "fail"
-    else:
-        await loader.delete(row.id)
-        result.msg = "ok"
-        result.id = None
-        
+    await loader.delete(id=tag.id)
+ 
+    result = PreferenceTagDeleteResultGQLModel(id=tag.id, msg="ok Deleted") if row else (
+        PreferenceTagDeleteResultGQLModel(id=tag.id, msg="fail")
+    )
     return result
 
 @strawberry.mutation(description="""updates the tag""", permission_classes=[OnlyForAuthentized()])

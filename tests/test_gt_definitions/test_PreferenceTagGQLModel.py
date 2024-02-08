@@ -4,7 +4,8 @@ from .gt_utils import (
     createPageTest, 
     createResolveReferenceTest, 
     createFrontendQuery, 
-    createUpdateQuery
+    createUpdateQuery,
+    createDeleteQuery
 )
 
 test_reference_tag = createResolveReferenceTest(tableName='preferedtags', gqltype='PreferenceTagGQLModel', attributeNames=["id", "name", "lastchange"])
@@ -100,13 +101,13 @@ test_preference_tag_remove = createFrontendQuery(
             preferenceTagDelete(tag: {id: "7a4c203e-2e3a-4ea0-9037-baa38d8400d2"}) {
                 id
                 msg
-                tag {
-                id
-                }
             }
         }
 """
 )
+
+#test_preference_tag_remove = createDeleteQuery(tableName="preferedtags", queryBase="preferenceTags", id="7a4c203e-2e3a-4ea0-9037-baa38d8400d2")
+
 
 #####################################################################
 #
@@ -138,9 +139,6 @@ test_preference_tag_remove_fail = createFrontendQuery(
             preferenceTagDelete(tag: {id: "11838aab-d06e-445e-9a2e-d3c55bc7cb11"}) {
                 id
                 msg
-                tag {
-                id
-                }
             }
         }
 """

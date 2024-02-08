@@ -6,7 +6,8 @@ from .gt_utils import (
     createPageTest, 
     createResolveReferenceTest, 
     createFrontendQuery, 
-    createUpdateQuery
+    createUpdateQuery,
+    createDeleteQuery
 )
 
 
@@ -109,41 +110,17 @@ test_update_preference_settings_fail = createFrontendQuery(
 )
 
 # 260, doesnt work?
-test_delete_preference_settings_fail = createFrontendQuery(
-    query="""mutation ($id: UUID!, $lastchange: DateTime!) {
+test_delete_preference_settings_fail_bad_id = createFrontendQuery(
+    query="""mutation ($id: UUID!) {
         result: preferenceSettingsDelete(
-            preferenceSettings: {id: $id, lastchange: $lastchange})
+            preferenceSettings: {id: $id})
              {
                 id
                 msg
-                preferenceSettings {
-                    id
-                    name
-                }
             }
     }""",
-    variables={"id": "918a8aab-d06e-445e-982e-d3c55bc7cb91", "lastchange": "2024-01-12T14:32:19.259899"},
+    variables={"id": "958a8aab-d06e-445e-982e-d3c55bc7cb91"},
 )
-
-#### Cant get to make it go through line 247, even the msg is "fail"
-# Create update query wasnt meant to be testing expected failitues
-# 
-
-#test_update_preference_settings_fail = createUpdateQuery(
-#    query="""mutation ($id: UUID!, $lastchange: DateTime!) {
-#        result: preferenceSettingsUpdate(
-#            preferenceSettings: {id: $id, lastchange: $lastchange})
-#             {
-#                id
-#                msg
-#                preferenceSettings {
-#                    id
-#                    }
-#            }
-#    }""",
-#    variables={"id": "928a8aab-d06e-445e-982e-d3c55bc7cb90"},
-#    tableName="preference_settings"
-#)
 
 #####################################################################
 #
@@ -151,20 +128,16 @@ test_delete_preference_settings_fail = createFrontendQuery(
 #
 #####################################################################
 
-test_delete_preference_settings = createUpdateQuery(
-    query="""
-        mutation ($id: UUID!, $lastchange: DateTime!) {
-            result: preferenceSettingsDelete(
-            preferenceSettings: {id: $id, lastchange: $lastchange})
-            {
-                id
-                msg
-                preferenceSettings {
-                    id
-                    }
-            }
-        }""",
-        variables={"id":"928a8aab-d06e-445e-982e-d3c55bc7cb90"},
-        tableName="preference_settings"
-)
+#test_delete_preference_settings = createFrontendQuery(
+#    query="""
+#        mutation ($id: UUID!, $lastchange: DateTime!) {
+#            preferenceSettingsDelete(preferenceSettings: {id: $id, lastchange: $lastchange}) {
+#                id
+#                msg
+#            }
+#        }""",
+#        variables={"id":"928a8aab-d06e-445e-982e-d3c55bc7cb90", "lastchange": "2024-02-07T08:17:10.955338"},
+#
+#)
 
+test_delete_preference_settings = createDeleteQuery(tableName="preference_settings", queryBase="preferenceSettings", id="928a8aab-d06e-445e-982e-d3c55bc7cb90")

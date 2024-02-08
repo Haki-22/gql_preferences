@@ -192,7 +192,7 @@ class PreferenceUserSettingsUpdateGQLModel:
 class PreferenceUserSettingsDeleteGQLModel:
     
     id: UUID = strawberry.field(description="primary key (UUID), identifies object of operation")
-    lastchange: datetime.datetime = strawberry.field(description="timestamp of last change = TOKEN")
+
 
 
 #####################################################################
@@ -207,6 +207,15 @@ For update operation fail should be also stated when bad lastchange has been ent
     async def preference_user_settings(self, info: strawberry.types.Info) -> Union[PreferenceUserSettingsGQLModel, None]:
         result = await PreferenceUserSettingsGQLModel.resolve_reference(info=info, id=self.id)
         return result
+
+# Delete result   
+@strawberry.type(description="Result of D operations")
+class PreferenceUserSettingsDeleteResultGQLModel:
+    id: UUID = strawberry.field(description="primary key of CU operation object")
+    msg: str = strawberry.field(description="""Should be `ok` if desired state has been reached, otherwise `fail`.
+For update operation fail should be also stated when bad lastchange has been entered.""")
+
+
 #
 #####################################################################
 
@@ -278,20 +287,15 @@ async def preference_user_settings_type_update(self, info: strawberry.types.Info
 
 # Delete existing User settings
 @strawberry.mutation(description="""Deletes already existing User settings 
-                     requires ID and lastchange""", permission_classes=[OnlyForAuthentized()])
-async def preference_user_settings_delete(self, info: strawberry.types.Info, user_settings: PreferenceUserSettingsDeleteGQLModel) -> PreferenceUserSettingsResultGQLModel:
+                     requires ID""", permission_classes=[OnlyForAuthentized()])
+async def preference_user_settings_delete(self, info: strawberry.types.Info, user_settings: PreferenceUserSettingsDeleteGQLModel) -> PreferenceUserSettingsDeleteResultGQLModel:
     loader = getLoaders(info).user_settings
 
     rows = await loader.filter_by(id=user_settings.id)
     row = next(rows, None)
     if row is None:     
-        return PreferenceUserSettingsResultGQLModel(id=user_settings.id, msg="Fail bad ID")
-
-    rows = await loader.filter_by(lastchange=user_settings.lastchange)
-    row = next(rows, None)
-    if row is None:     
-        return PreferenceUserSettingsResultGQLModel(id=user_settings.id, msg="Fail (bad lastchange?)")
+        return PreferenceUserSettingsDeleteResultGQLModel(id=user_settings.id, msg="Fail bad ID")
     
     await loader.delete(user_settings.id)
     
-    return PreferenceUserSettingsResultGQLModel(id=user_settings.id, msg="OK, deleted")
+    return PreferenceUserSettingsDeleteResultGQLModel(id=user_settings.id, msg="OK, deleted")

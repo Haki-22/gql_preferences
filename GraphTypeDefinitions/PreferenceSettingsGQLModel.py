@@ -72,6 +72,13 @@ class PreferenceSettingsGQLModel(BaseGQLModel):
         from .externals import UserGQLModel
         #print(self.userids, "neco")
         return await UserGQLModel.resolve_array_reference(id=self.userids) """
+
+##### VALID (If the subtypes shouldnt be deleted)
+#   @strawberry.field(
+#       description="""preference settings's validity""",
+#       permission_classes=[OnlyForAuthentized()])
+#   def valid(self) -> bool:
+#       return self.valid
     
 #############################################################
 #
@@ -164,6 +171,7 @@ class PreferenceSettingsInsertGQLModel:
     order: Optional[int] = strawberry.field(description="Position in parent entity", default=None)
     preference_settings_type_id: UUID = strawberry.field(description="id of parent entity")
     createdby: strawberry.Private[UUID] = None 
+    #valid: Optional[bool] = True
 
 ################# 
 # Update
@@ -177,6 +185,15 @@ class PreferenceSettingsUpdateGQLModel:
     
     order: Optional[int] = strawberry.field(description="Position in parent entity", default=None)
     changedby: strawberry.Private[UUID] = None
+    #valid: Optional[bool] = True
+
+################# 
+# Delete
+@strawberry.input(description="Deletes already existing preference settings")
+class PreferenceSettingsDeleteGQLModel:
+    
+    id: UUID = strawberry.field(description="primary key (UUID), identifies object of operation")
+    #lastchange: datetime.datetime = strawberry.field(description="timestamp of last change = TOKEN")
 
 
 #####################################################################
@@ -190,6 +207,14 @@ For update operation fail should be also stated when bad lastchange has been ent
     @strawberry.field(description="Object of CU operation, final version")
     async def preference_settings(self, info: strawberry.types.Info) -> Union[PreferenceSettingsGQLModel, None]:
         return await PreferenceSettingsGQLModel.resolve_reference(info=info, id=self.id)
+    
+# Delete result   
+@strawberry.type(description="Result of D operations")
+class PreferenceSettingsDeleteResultGQLModel:
+    id: UUID = strawberry.field(description="primary key of CU operation object")
+    msg: str = strawberry.field(description="""Should be `ok` if desired state has been reached, otherwise `fail`.
+For update operation fail should be also stated when bad lastchange has been entered.""")
+
 #
 #####################################################################
 
@@ -250,21 +275,21 @@ async def preference_settings_update(self, info: strawberry.types.Info, preferen
 
 # Delete existing PreferenceSettings
 @strawberry.mutation(description="""Deletes already existing preference settings 
-                     rrequires ID and lastchange""", permission_classes=[OnlyForAuthentized()])
-async def preference_settings_delete(self, info: strawberry.types.Info, preference_settings: PreferenceSettingsUpdateGQLModel) -> PreferenceSettingsResultGQLModel:
+                     rrequires ID""", permission_classes=[OnlyForAuthentized()])
+async def preference_settings_delete(self, info: strawberry.types.Info, preference_settings: PreferenceSettingsDeleteGQLModel) -> PreferenceSettingsDeleteResultGQLModel:
     loader = getLoaders(info).preference_settings
 
     rows = await loader.filter_by(id=preference_settings.id)
     row = next(rows, None)
     if row is None:     
-        return PreferenceSettingsResultGQLModel(id=preference_settings.id, msg="Fail bad ID")
+        return PreferenceSettingsDeleteResultGQLModel(id=preference_settings.id, msg="Fail bad ID")
 
-    rows = await loader.filter_by(lastchange=preference_settings.lastchange)
-    row = next(rows, None)
-    if row is None:     
-        return PreferenceSettingsResultGQLModel(id=preference_settings.id, msg="Fail (bad lastchange?)")
+    #rows = await loader.filter_by(lastchange=preference_settings.lastchange)
+    #row = next(rows, None)
+    #if row is None:     
+    #    return PreferenceSettingsDeleteResultGQLModel(id=preference_settings.id, msg="Fail (bad lastchange?)")
     
     id_for_resposne = preference_settings.id
     await loader.delete(preference_settings.id)
     
-    return PreferenceSettingsResultGQLModel(id=id_for_resposne, msg="OK, deleted")
+    return PreferenceSettingsDeleteResultGQLModel(id=id_for_resposne, msg="OK, deleted")

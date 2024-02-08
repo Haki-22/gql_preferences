@@ -6,7 +6,8 @@ from .gt_utils import (
     createPageTest, 
     createResolveReferenceTest, 
     createFrontendQuery, 
-    createUpdateQuery
+    createUpdateQuery,
+    createDeleteQuery
 )
 
 
@@ -172,6 +173,19 @@ test_insert_preference_settings_for_user_already_existing = createFrontendQuery(
     }"""
 )
 
+test_delete__preference_settings_for_user_fail_bad_id = createFrontendQuery(
+    query="""
+
+        mutation ($id: UUID!) {
+            result: preferenceUserSettingsDelete(
+            userSettings: {id: $id})
+            {
+                id
+                msg
+            }
+        }""",
+        variables={"id":"81838aab-d06e-445e-9a2e-d3c55bc7cb11"},
+)
 ## Create update query wasnt meant to be testing expected failitues
 
 #test_delete__preference_settings_for_user_fail_bad_id = createUpdateQuery(
@@ -220,21 +234,18 @@ test_insert_preference_settings_for_user_already_existing = createFrontendQuery(
 ##
 ######################################################################
 #
-test_delete__preference_settings_for_user = createUpdateQuery(
+test_delete__preference_settings_for_user = createFrontendQuery(
     query="""
 
-        mutation ($id: UUID!, $lastchange: DateTime!) {
+        mutation ($id: UUID!) {
             result: preferenceUserSettingsDelete(
-            userSettings: {id: $id, lastchange: $lastchange})
+            userSettings: {id: $id})
             {
                 id
                 msg
-                preferenceUserSettings{
-                    id
-                }
-                
             }
         }""",
         variables={"id":"11838aab-d06e-445e-9a2e-d3c55bc7cb11"},
-        tableName="user_settings"
 )
+
+#test_delete__preference_settings_for_user = createDeleteQuery(tableName="user_settings", queryBase="userSettings", id="11838aab-d06e-445e-9a2e-d3c55bc7cb11")

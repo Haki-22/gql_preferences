@@ -4,7 +4,8 @@ from .gt_utils import (
     createPageTest, 
     createResolveReferenceTest, 
     createFrontendQuery, 
-    createUpdateQuery
+    createUpdateQuery,
+    createDeleteQuery
 )
 
 test_preference_tag_etntity = createResolveReferenceTest(tableName='preferedtagentities', gqltype='PreferenceTagEntityGQLModel', attributeNames=["id", "lastchange"])
@@ -156,6 +157,17 @@ test_preference_tag_add_to_entity = createFrontendQuery(
 #"""
 #)
 
+test_preference_tag_add_to_entity_fail_already_exists = createFrontendQuery(
+    query="""
+        mutation {
+        preferenceTagAddToEntity(
+            tagData: {entityId: "2d9dc868-a4a2-11ed-b9df-0242ac120003", entityTypeId: "e8479a21-b7c4-4140-9562-217de2656d55", tagId: "8148fd61-77b3-45d1-a382-ca3aadafb9a1"}
+        ) {
+            id
+            msg
+            }
+        }""")
+
 #Remove tag from entity by ID fil bcs of bad id
 test_preference_tag_remove_from_entity_fail = createFrontendQuery(
     query="""
@@ -188,6 +200,8 @@ test_preference_tag_remove_from_entity = createFrontendQuery(
     }
 """
 )
+
+#test_preference_tag_remove_from_entity = createDeleteQuery(tableName="preferedtagentities", queryBase="preferenceTag", id="2f22d834-5d74-4746-86f8-09f2989dc6a7")
 
 
 #test_query_tag_by_id = createByIdTest(tableName="preferedtagentities", queryEndpoint="preferenceTagById")

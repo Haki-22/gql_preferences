@@ -40,6 +40,8 @@ class PreferenceSettingsModel(BaseModel):
 
     rbacobject = UUIDFKey(nullable=True, comment="user or group id, determines access")
 
+    #valid = Column(Boolean, default=True)
+
     #default_settings = Column(Boolean,comment="is it default preference settings? True=Default", default=False)
 
     #userids = Column(ARRAY(Uuid), comment="Array of user IDs with this preference setting")

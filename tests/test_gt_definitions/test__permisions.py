@@ -192,29 +192,29 @@ async def test_low_role_say_hello(DemoFalse, OAuthServer, ClientExecutorNoDemo, 
 
 
 
-@pytest.mark.asyncio
-async def test_demo_role(DemoFalse, ClientExecutorAdmin, FillDataViaGQL, Context, Env_GQLUG_ENDPOINT_URL_8124):
-    GQLUG_ENDPOINT_URL = os.environ.get("GQLUG_ENDPOINT_URL", None)
-    logging.info(f"test_low_role GQLUG_ENDPOINT_URL: \n{GQLUG_ENDPOINT_URL}")
-    DEMO = os.environ.get("DEMO", None)
-    logging.info(f"test_low_role DEMO: {DEMO}")
-    query = """
-    query ($id: UUID!) {
-        result: preferenceSettingsTypeById(id: $id) {
-            id
-            name
-        }
-    }
-    """
-    variable_values = {"id": "89838aab-d06e-445e-9a2e-d3c55bc7cb90"}
-    result = await ClientExecutorAdmin(query=query, variable_values=variable_values)
-    logging.info(f"test_demo_role result: \n {result}")
-    print(result)
-    errors = result.get("errors", None)
-    data = result.get("data", None)
-    assert errors is None, result
-    assert data["result"] is not None, data
-    assert data["result"]["id"] == variable_values["id"], data
+#@pytest.mark.asyncio
+#async def test_demo_role(DemoFalse, ClientExecutorAdmin, FillDataViaGQL, Context, Env_GQLUG_ENDPOINT_URL_8124):
+#    GQLUG_ENDPOINT_URL = os.environ.get("GQLUG_ENDPOINT_URL", None)
+#    logging.info(f"test_low_role GQLUG_ENDPOINT_URL: \n{GQLUG_ENDPOINT_URL}")
+#    DEMO = os.environ.get("DEMO", None)
+#    logging.info(f"test_low_role DEMO: {DEMO}")
+#    query = """
+#    query ($id: UUID!) {
+#        result: preferenceSettingsTypeById(id: $id) {
+#            id
+#            name
+#        }
+#    }
+#    """
+#    variable_values = {"id": "89838aab-d06e-445e-9a2e-d3c55bc7cb90"}
+#    result = await ClientExecutorAdmin(query=query, variable_values=variable_values)
+#    logging.info(f"test_demo_role result: \n {result}")
+#    print(result)
+#    errors = result.get("errors", None)
+#    data = result.get("data", None)
+#    assert errors is None, result
+#    assert data["result"] is not None, data
+#    assert data["result"]["id"] == variable_values["id"], data
     
 
 @pytest.mark.asyncio

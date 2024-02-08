@@ -147,6 +147,16 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
 
 - Pytest up to  74%
 
+- Added 
+
+   ```from dotenv import load_dotenv ->
+   
+   load_dotenv("environment.env") ```
+
+   bcs of 
+
+   "Couldn't load DEMO variable"
+
 
 ### 11.1.
 
@@ -169,7 +179,7 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
  ```
   ===================================================================== warnings summary ====================================================================== 
   .venv\lib\site-packages\strawberry\types\fields\resolver.py:229
-    z:\SKOLA\5semestr\prg\gql_preferences\.venv\lib\site-packages\strawberry\types\fields\resolver.py:229: DeprecationWarning: Argument name-based matching of 'info' is deprecated and will be removed in v1.0. Ensure that reserved arguments are annotated their respective types (i.e. use value: 'DirectiveValue[str]' instead of 'value: str' and 'info: Info' instead of a plain 'info').
+    gql_preferences\.venv\lib\site-packages\strawberry\types\fields\resolver.py:229: DeprecationWarning: Argument name-based matching of 'info' is deprecated and will be removed in v1.0. Ensure that reserved arguments are annotated their respective types (i.e. use value: 'DirectiveValue[str]' instead of 'value: str' and 'info: Info' instead of a plain 'info').
       return {spec: spec.find(parameters, self) for spec in self.RESERVED_PARAMSPEC}
 
   tests/test_gt_definitions/test_PreferenceSettingsGQLModel.py: 9 warnings
@@ -178,7 +188,7 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
   tests/test_gt_definitions/test_PreferenceTagGQLModel.py: 9 warnings
   tests/test_gt_definitions/test_PreferenceUserSettingsGQLModel.py: 10 warnings
   tests/test_gt_definitions/test__permisions.py: 4 warnings
-    z:\SKOLA\5semestr\prg\gql_preferences\.venv\lib\site-packages\pytest_asyncio\plugin.py:884: DeprecationWarning: There is no current event loop
+    gql_preferences\.venv\lib\site-packages\pytest_asyncio\plugin.py:884: DeprecationWarning: There is no current event loop
       _loop = asyncio.get_event_loop()
 
   -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
@@ -217,6 +227,75 @@ docker [image](https://hub.docker.com/repository/docker/haki22/gql-preferences/g
 
   ======================================================== 49 passed, 50 warnings in 237.95s (0:03:57) ======================================================== 
   ```
+
+### 7.2.
+
+- Fixed all deletes to have their own delete and deleteResult model
+
+- Removed lastchange from deleteGQLmodels as it's a larger operation and thus lastchange is no longer relevant to us 
+
+- added createDeleteQuery to gt_utils.py for pytesting from [Nafreju](https://github.com/Nafreju/gql_events/blob/tests_delete/tests/test_gt_definitions/gt_utils.py#L248)
+
+  - used in Settings and Settings Types (PreferenceSettingsGQLModel, PreferenceSettingsTypeGQLModel)
+
+- pytests now up to 89%
+
+   ```
+   ======================================================================================================== warnings summary ======================================================================================================== 
+  tests/test_gt_definitions/test_PreferenceSettingsGQLModel.py::test_reference_preference_settings
+    M:\Programy\Python\lib\site-packages\strawberry\types\fields\resolver.py:229: DeprecationWarning: Argument name-based matching of 'info' is deprecated and will be removed in v1.0. Ensure that reserved arguments are annotated 
+  their respective types (i.e. use value: 'DirectiveValue[str]' instead of 'value: str' and 'info: Info' instead of a plain 'info').
+      return {spec: spec.find(parameters, self) for spec in self.RESERVED_PARAMSPEC}
+
+  tests/test_gt_definitions/test_PreferenceSettingsGQLModel.py: 9 warnings
+  tests/test_gt_definitions/test_PreferenceSettingsTypeGQLModel.py: 10 warnings
+  tests/test_gt_definitions/test_PreferenceTagEntityGQLModel.py: 8 warnings
+  tests/test_gt_definitions/test_PreferenceTagGQLModel.py: 9 warnings
+  tests/test_gt_definitions/test_PreferenceUserSettingsGQLModel.py: 11 warnings
+  tests/test_gt_definitions/test__permisions.py: 1 warning
+    M:\Programy\Python\lib\site-packages\pytest_asyncio\plugin.py:886: DeprecationWarning: There is no current event loop
+      _loop = asyncio.get_event_loop()
+
+  -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+
+  ---------- coverage: platform win32, python 3.10.5-final-0 -----------
+  Name                                                     Stmts   Miss  Cover   Missing
+  --------------------------------------------------------------------------------------
+  DBDefinitions\Base.py                                       35     18    49%   20-30, 42-50
+  DBDefinitions\PreferenceSettingsDBModel.py                  19      0   100%
+  DBDefinitions\PreferenceSettingsTypeDBModel.py              18      0   100%
+  DBDefinitions\PreferenceTagDBModel.py                       15      0   100%
+  DBDefinitions\PreferenceTagEntityDBModel.py                 16      0   100%
+  DBDefinitions\PreferenceUserSettingsDBModel.py              18      0   100%
+  DBDefinitions\__init__.py                                    6      0   100%
+  DBDefinitions\uuid.py                                        6      0   100%
+  GraphTypeDefinitions\BaseGQLModel.py                        19      1    95%   9
+  GraphTypeDefinitions\PreferenceSettingsGQLModel.py         122      0   100%
+  GraphTypeDefinitions\PreferenceSettingsTypeGQLModel.py     130      0   100%
+  GraphTypeDefinitions\PreferenceTagEntityGQLModel.py        138      0   100%
+  GraphTypeDefinitions\PreferenceTagGQLModel.py              112      0   100%
+  GraphTypeDefinitions\PreferenceUserSettingsGQLModel.py     130      0   100%
+  GraphTypeDefinitions\_GraphPermissions.py                   92     52    43%   44, 191-205, 208, 270-273, 294-295, 300, 311, 317-385
+  GraphTypeDefinitions\_GraphResolvers.py                     51      2    96%   280-281
+  GraphTypeDefinitions\_RBACObjectGQLModel.py                 13      3    77%   14-16
+  GraphTypeDefinitions\__init__.py                             5      0   100%
+  GraphTypeDefinitions\externals.py                           39      1    97%   13
+  GraphTypeDefinitions\mutation.py                            18      0   100%
+  GraphTypeDefinitions\query.py                               20      0   100%
+  GraphTypeDefinitions\utils.py                              106      7    93%   30-38
+  utils\DBFeeder.py                                           40      5    88%   29, 34-36, 61
+  utils\Dataloaders.py                                       129     50    61%   151-155, 167-171, 174, 177-212, 217-222, 344, 413-414, 461-464, 469-471
+  utils\gql_ug_proxy.py                                       38      8    79%   29-31, 39-42, 55
+  utils\sentinel.py                                            8      0   100%
+  --------------------------------------------------------------------------------------
+  TOTAL                                                     1343    147    89%
+
+  ==================================================================================================== short test summary info ===================================================================================================== 
+  ERROR tests/test_gt_definitions/test__permisions.py::test_low_role - AssertionError: <ClientResponse(http://localhost:8125/oauth/login3) [500 Internal Server Error]>
+  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! stopping after 1 failures !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
+  ====================================================================================== 48 passed, 49 warnings, 1 error in 211.31s (0:03:31) ====================================================================================== 
+  ```
+
 
 ---
 
